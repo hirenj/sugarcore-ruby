@@ -1,0 +1,793 @@
+<glycanDict xmlns="http://penguins.mooh.org/research/glycan-dict-0.2"
+			xmlns:dkfz="http://glycosciences.de" 
+			xmlns:ic="http://www.iupac.org/condensed"
+			xmlns:ecdb="http://ns.eurocarbdb.org/glycoct"
+			xmlns:glyde="http://ns.eurocarbdb.org/glyde"
+			xmlns:stephan="http://www.dkfz.de/stephan"
+			xmlns:disp="http://penguins.mooh.org/research/glycan-display-0.1"
+			xmlns:svg="http://www.w3.org/2000/svg">
+<!--
+	
+	PARENT
+	
+	-dgal-hex
+	-dgal-hex(2)n-acetyl
+	-dglc-hex
+	-dglc-hex(2)amino
+	-dglc-hex(2)n-acetyl
+	-dglc-hex|6:a
+	-dman-hex
+
+	-dxyl-pen
+	-lara-pen
+	
+	-lgal-hex|6:d
+	-lido-hex|6:a
+
+	-dgro-dgal-non|1:a|2:keto|3:d(5)n-acetyl
+	-dgro-dgal-non|1:a|2:keto|3:d(5)n-glycolyl
+
+	
+	TODO
+
+	-dglc-hex(1)amino	
+	-dman-hex(5)anhydro
+	-dxyl-hex|3:d
+	-dxyl-hex|3:d(2)n-acetyl
+	-dxyl-hex|4:d
+	-dxyl-hex|4:d(2)n-acetyl
+
+
+
+	-dglc-hex|6:d(2)n-acetyl
+	-dglc-hex(2)n-sulfate
+
+	-hex(2)n-acetyl
+	-hex|3,4:enx
+
+	-xgal-hex
+	-xgal-hex(2)n-acetyl	
+	
+	----
+	
+-->
+
+<!--
+
+CHILD
+
+-dgal-hex
+-dgal-hex(2)n-acetyl
+-dglc-hex(2)n-acetyl
+-dgal-hex|6:d
+-dglc-hex
+-dglc-hex|6:a
+-dman-hex
+-dxyl-pen
+-lgal-hex|6:d
+-lido-hex|6:a
+-dgro-dgal-non|1:a|2:keto|3:d(5)n-acetyl
+-dgro-dgal-non|1:a|2:keto|3:d(5)n-glycolyl
+-lara-pen
+
+
+-- TODO
+
+-dgal-hex(2)methyl
+-dglc-hex(2)amino
+-dglc-hex(2)n-sulfate
+-dgro-dgal-non|1:a|2:keto|3:d(1)amino(5)n-acetyl
+-dgro-dgal-non|1:a|2:keto|3:d(4)acetyl(5)n-glycolyl
+-dgro-dgal-non|1:a|2:keto|3:d(5)amino
+-dgro-dgal-non|1:a|2:keto|3:d(5)amino(9)acetyl
+-dgro-dgal-non|1:a|2:keto|3:d(5)n-acetyl(9)acetyl
+-dxyl-hex|3:d
+-dxyl-hex|4:d
+-llyx-hex|2:d|6:d
+-lthr-hex|4,5:enx|6:a
+-lxyl-hex|3:d|6:d
+-lxyl-hex|4:d|6:d
+-xgal-hex	
+	
+-->
+
+	<unit id="nil">
+		<name ns="dkfz" value="Nil" />
+		<name ns="ic" value="Nil" />
+		<name ns="ecdb" value="nil" />
+		<name ns="glyde" value="nil"/>
+		<name ns="stephan" value="-nil"/>
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="0" y="50" />
+		  <disp:anchor linkage="2" x="0" y="50" />
+		  <disp:anchor linkage="3" x="0" y="50" />
+		  <disp:anchor linkage="4" x="0" y="50" />
+		  <disp:anchor linkage="5" x="0" y="50" />
+		  <disp:anchor linkage="6" x="0" y="50" />
+		  <disp:anchor linkage="-1" x="0" y="50" />
+		  <svg:svg>
+		    <!--<svg:text x="15" y="85" width="100" height="100" font-size="100"
+style="fill:#000000;stroke:#000000;stroke-width:1;"
+		     >?</svg:text>-->
+		  </svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="0" y="50" />
+		  <disp:anchor linkage="2" x="50" y="100" />
+		  <disp:anchor linkage="3" x="0" y="100" />
+		  <disp:anchor linkage="4" x="0" y="50" />
+		  <disp:anchor linkage="5" x="0" y="0" />
+		  <disp:anchor linkage="6" x="0" y="0" />
+		  <disp:anchor linkage="8" x="50" y="0" />
+		  <disp:anchor linkage="-1" x="50" y="50" />
+		  <svg:svg>
+		    <svg:text x="15" y="85" width="100" height="100" font-size="100"
+style="fill:#000000;stroke:#000000;stroke-width:1;"
+		     >?</svg:text>
+		  </svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="daraf">
+		<name ns="dkfz" value="D-Araf" />
+		<name ns="ic" value="DAra" />
+		<name ns="ecdb" value="daraf" />
+		<property name="ringsize" value="5"/>
+		<property name="class" value="ic:Pent"/>
+	</unit>
+	<unit id="laraf">
+		<name ns="dkfz" value="L-Araf" />
+		<name ns="ic" value="Ara" />
+		<name ns="ecdb" value="laraf" />
+		<name ns="glyde" value="lara-pen-1:5"/>
+		<name ns="stephan" value="-lara-pen"/>
+		
+		<property name="ringsize" value="5"/>
+		<property name="class" value="ic:Pent"/>
+	</unit>
+	
+	<unit id="dfruf">
+		<name ns="dkfz" value="D-Fruf" />
+		<name ns="ic" value="Fruf" />
+		<name ns="ecdb" value="dfruf" />		
+		<property name="ringsize" value="5"/>
+		<property name="class" value="ic:Hex"/>
+	</unit>
+	<unit id="dgalp|6d">
+		<name ns="dkfz" value="D-Galp|6d" />
+		<name ns="ic" value="DFuc" />
+		<name ns="ecdb" value="dgalp|6d" />
+		<name ns="glyde" value="dgal-hex-1:5|6:d"/>
+		<name ns="stephan" value="-dgal-hex|6:d"/>
+		<ecdb:substituents>
+			<ecdb:substituent position="6">d</ecdb:substituent>
+		</ecdb:substituents>
+		
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:DeoxyHex"/>
+	</unit>
+	<unit id="lgalp|6d">
+		<name ns="dkfz" value="L-Galp|6d" />
+		<name ns="ic" value="Fuc" />
+		<name ns="ic" value="LFuc"/>
+		<name ns="ecdb" value="lgalp|6d"/>
+		<name ns="glyde" value="lgal-hex-1:5|6:d"/>
+		<name ns="stephan" value="-lgal-hex|6:d"/>
+		<ecdb:substituents>
+			<ecdb:substituent position="6">d</ecdb:substituent>
+		</ecdb:substituents>
+		
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:DeoxyHex"/>
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+		    <svg:path
+		       d="M -37.742300,46.706896 L -130.25770,46.706896 L -84.000000,-33.413792 L -37.742300,46.706896 z "
+		       transform="translate(135.2577,40.91379)"
+		       style="fill:#ff0000;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+		       />
+		  </svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+		    <svg:path
+		       d="M -147.00000,41.500001 L -167.08011,21.487260 L -185.00000,4.4999994 L -164.98726,-15.580113 L -148.00000,-33.500001 L -127.91989,-13.487260 L -110.00000,3.5000006 L -130.01274,23.580113 L -147.00000,41.500001 z "
+		       transform="matrix(0.786405,0.000000,0.000000,1.319756,165.9945,44.72119)"
+		       style="fill:#bfcfe6;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+		       />
+		    <svg:path
+		       d="M 68.000000 50.000000 A 18.000000 18.000000 0 1 1  32.000000,50.000000 A 18.000000 18.000000 0 1 1  68.000000 50.000000 z"
+		       style="fill:#111d2c;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+		       />
+		  </svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dgalp">
+		<name ns="dkfz" value="D-Galp" />
+		<name ns="ic" value="Gal" />
+		<name ns="ecdb" value="dgalp" />
+		<name ns="glyde" value="dgal-hex-1:5"/>
+		<name ns="stephan" value="-dgal-hex"/>
+		
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+			<svg:circle cx="50" cy="50" r="49" style="fill:#fffc00;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/>
+		  </svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="78" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="22" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+		    <svg:path
+		       d="M -147.00000,41.500001 L -167.08011,21.487260 L -185.00000,4.4999994 L -164.98726,-15.580113 L -148.00000,-33.500001 L -127.91989,-13.487260 L -110.00000,3.5000006 L -130.01274,23.580113 L -147.00000,41.500001 z "
+		       transform="matrix(0.786405,0.000000,0.000000,1.319756,165.9945,44.72119)"
+		       style="fill:#aec3e0;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+		       />
+		  </svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dgalol">
+		<name ns="glyde" value="dgal-hex-0:0|1:aldi"/>
+		<name ns="ic" value="Gal-ol"/>
+	</unit>
+	<unit id="dgalp|2nac">
+		<name ns="dkfz" value="D-Galp|2NAc" />
+		<name ns="ic" value="GalNAc" />
+		<name ns="ecdb" value="dgalp|2nac" />
+		<name ns="glyde" value="dgal-hex-1:5|2n-acetyl"/>
+		<name ns="stephan" value="-dgal-hex(2)n-acetyl"/>
+		
+		<ecdb:substituents>
+			<ecdb:substituent position="2">nac</ecdb:substituent>
+		</ecdb:substituents>
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+			<svg:svg>
+				<svg:rect
+				   width="98"
+				   height="98"
+				   x="1"
+				   y="1" style="fill:#fffc00;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+				   />
+			</svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+			<svg:svg>
+				<svg:path
+			       d="M -147.00000,41.500001 L -167.08011,21.487260 L -185.00000,4.4999994 L -164.98726,-15.580113 L -148.00000,-33.500001 L -127.91989,-13.487260 L -110.00000,3.5000006 L -130.01274,23.580113 L -147.00000,41.500001 z "
+			       transform="matrix(0.786405,0.000000,0.000000,1.319756,165.9945,44.72119)"
+			       style="fill:#111d2c;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+			       />
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dgalol|2nac">
+		<name ns="glyde" value="dgal-hex-0:0|1:aldi|2n-acetyl"/>
+		<name ns="ic" value="GalNAc-ol"/>
+	</unit>
+	<unit id="dgalp|2n">
+		<name ns="dkfz" value="D-Galp|2n" />		
+		<name ns="ic" value="GalN" />
+		<name ns="ecdb" value="dgalp|2n"/>
+		<name ns="glyde" value="dgal-hex-1:5|2n"/>
+		<name ns="stephan" value="-dgal-hex(2)amino"/>
+		<ecdb:substituents>
+			<ecdb:substituent position="2">n</ecdb:substituent>
+		</ecdb:substituents>
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+			<svg:svg>
+			    <svg:rect
+			       width="99"
+			       height="99"
+			       x="0"
+			       y="0"       style="stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000;fill:none;"
+			       />
+				<svg:path d="M 0 0 L 99 0 L 99 99 z" style="stroke:#000000; stroke-width=:1;stroke-miterlimit:0;stroke-opacity:1;fill:#ffff00;fill-opacity:1"/>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dglcp" >
+		<name ns="dkfz" value="D-Glcp" />	
+		<name ns="ic" value="Glc" />
+		<name ns="ecdb" value="dglcp"/>
+		<name ns="glyde" value="dglc-hex-1:5"/>
+		<name ns="stephan" value="-dglc-hex"/>
+
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+			<svg:circle cx="50" cy="50" r="49" style="fill:#0008ff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/>
+		  </svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="100" y="50" />
+		  <disp:anchor linkage="2" x="0" y="100" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+		    <svg:rect
+		       width="100"
+		       height="100"
+		       x="0"
+		       y="0"
+ style="fill:#93afd5;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+		       />
+		  </svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dglcol">
+		<name ns="glyde" value="dglc-hex-0:0|1:aldi"/>
+		<name ns="ic" value="Glc-ol"/>
+	</unit>
+	<unit id="dglcp|1a">
+		<name ns="dkfz" value="D-Glcp|1a" />
+		<name ns="ic" value="Glc1A"/>
+		<name ns="ecdb" value="dglcp|1a"/>
+		<name ns="glyde" value="dglc-hex-1:5|1:a"/>
+		<name ns="stephan" value="-dglc-hex|1:a"/>
+	</unit>
+	<unit id="dglcp|2a">
+		<name ns="dkfz" value="D-Glcp|2a" />
+		<name ns="ic" value="Glc2A"/>
+		<name ns="ecdb" value="dglcp|2a"/>
+		<name ns="glyde" value="dglc-hex-1:5|2:a"/>
+		<name ns="stephan" value="-dglc-hex|2:a"/>
+	</unit>
+	<unit id="dglcp|6a" >
+		<name ns="dkfz" value="D-Glcp|6a" />
+		<name ns="ic" value="GlcA" />
+		<name ns="ecdb" value="dglcp|6a"/>
+		<name ns="glyde" value="dglc-hex-1:5|6:a"/>
+		<name ns="stephan" value="-dglc-hex|6:a"/>		
+		<ecdb:substituents>
+			<ecdb:substituent position="6">a</ecdb:substituent>
+		</ecdb:substituents>
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+			<svg:svg>
+				<svg:path d="M 50 0 L 100 50 L 50 100 L 0 50 z" style="stroke:#000000; stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;fill:none;"/>
+				<svg:path d="M 50 0 L 100 50 L 0 50 z" style="stroke:#000000; stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;fill:#0000fa;fill-opacity:1"/>
+			</svg:svg>
+		</disp:icon>		
+	</unit>
+	<unit id="dglcp|2nac" >
+		<name ns="dkfz" value="D-Glcp|2nac" />
+		<name ns="ic" value="GlcNAc" />
+		<name ns="ecdb" value="dglcp|2nac"/>
+		<name ns="glyde" value="dglc-hex-1:5|2n-acetyl"/>
+		<name ns="stephan" value="-dglc-hex(2)n-acetyl"/>
+
+		<ecdb:substituents>
+			<ecdb:substituent position="2">nac</ecdb:substituent>
+		</ecdb:substituents>
+		
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+			<svg:svg>
+			    <svg:rect
+			       width="98"
+			       height="98"
+			       x="1"
+			       y="1"       style="fill:#0008ff;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+			       />
+			</svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <disp:anchor linkage="0" x="0" y="50" />
+			<svg:svg>
+			    <svg:rect
+			       width="100.00000"
+			       height="100.00000"
+			       x="0.0000000"
+			       y="0.49999994"
+			       style="fill:#111d2c;fill-opacity:1.0000000;fill-rule:evenodd;stroke:#000000;stroke-width:1.0000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+			       />
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dglcol|2nac">
+		<name ns="glyde" value="dglc-hex-0:0|1:aldi|2n-acetyl"/>
+		<name ns="ic" value="GlcNAc-ol"/>
+	</unit>
+	<unit id="dglcp|6d|2nac">
+		<name ns="dkfz" value="D-Glcp|6d|2nac"/>
+		<name ns="ic" value="QuipNAc"/>
+		<name ns="ecdb" value="dglcp|6d|2nac"/>
+		<name ns="glyde" value="dglc-hex-1:5|6d|2n-acetyl"/>
+		<name ns="stephan" value="-dglc-hex(6)d(2)n-acetyl"/>		
+	</unit>
+	<unit id="dglcp|2n" >
+		<name ns="dkfz" value="D-Glcp|2n" />		
+		<name ns="ic" value="GlcN" />
+		<name ns="ecdb" value="dglcp|2n"/>
+		<name ns="glyde" value="dglc-hex-1:5|2n"/>
+		<name ns="stephan" value="-dglc-hex(2)amino"/>
+		<ecdb:substituents>
+			<ecdb:substituent position="2">n</ecdb:substituent>
+		</ecdb:substituents>		
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+			<svg:svg>
+			    <svg:rect
+			       width="99"
+			       height="99"
+			       x="0"
+			       y="0"       style="stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000;fill:none;"
+			       />
+				<svg:path d="M 0 0 L 99 0 L 99 99 z" style="stroke:#000000; stroke-width:1;stroke-miterlimit:0;stroke-opacity:1;fill:#0000fa;fill-opacity:1"/>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="lidop" >
+		<name ns="dkfz" value="L-Idop" />	
+		<name ns="ic" value="Idop" />
+		<name ns="ic" value="Ido" />
+		<name ns="ecdb" value="lidop"/>
+		<name ns="glyde" value="lido-hex-1:5"/>
+		<name ns="stephan" value="-lido-hex"/>
+		
+		<property name="class" value="ic:Hex"/>
+	</unit>
+	<unit id="lidop|6a" >
+		<name ns="dkfz" value="L-Idop|6a" />	
+		<name ns="ic" value="IdoA" />
+		<name ns="ecdb" value="lidop|6a"/>
+		<name ns="glyde" value="lido-hex-1:5|6:a"/>
+		<name ns="stephan" value="-lido-hex|6:a"/>
+
+		<ecdb:substituents>
+			<ecdb:substituent position="6">a</ecdb:substituent>
+		</ecdb:substituents>
+		
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+			<svg:svg>
+				<svg:path d="M 50 0 L 100 50 L 50 100 L 0 50 z" style="stroke:#000000; stroke-width=:1;stroke-miterlimit:4;stroke-opacity:1;fill:none;"/>
+				<svg:path d="M 50 100 L 100 50 L 0 50 z" style="stroke:#000000; stroke-width=:1;stroke-miterlimit:4;stroke-opacity:1;fill:#966432;fill-opacity:1"/>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dkdo" >
+		<name ns="dkfz" value="D-Kdo"/>
+		<name ns="ic" value="Kdo" />
+		<name ns="ecdb" value="dkdo" />
+		<!-- FIXME -->
+		<name ns="glyde" value="dkdo-oct-1:0"/>
+		<property name="class" value="ic:Oct"/>
+	</unit>
+	<unit id="dmanp" >
+		<name ns="dkfz" value="D-Manp" />
+		<name ns="ic" value="Man" />
+		<name ns="ecdb" value="dmanp" />
+		<name ns="glyde" value="dman-hex-1:5"/>
+		<name ns="stephan" value="-dman-hex"/>
+
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+			<svg:circle cx="50" cy="50" r="49" style="fill:#00ff14;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/>		
+		  </svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+		    <svg:path
+		       d="M 100 50 A 50 50 0 1 1  0,50 A 50 50 0 1 1  100 50 z"
+		       style="fill:#bfcfe6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+		       />
+		  </svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dmanol">
+		<name ns="glyde" value="dman-hex-0:0|1:aldi"/>
+		<name ns="ic" value="Man-ol"/>
+	</unit>
+	<unit id="dneu|1a|2keto|3d|5ngc" >
+		<name ns="dkfz" value="D-Neu|1a|2keto|3d|5ngc" />
+		<name ns="ic" value="NeuGc" />
+		<name ns="ic" value="Neu5Gc" />
+		<name ns="ecdb" value="dneu|1a|2keto|3d|5ngc"/>
+		<name ns="stephan" value="-dgro-dgal-non|1:a|2:keto|3:d(5)n-glycolyl"/>
+		<!-- FIXME.. what is right here? -->
+		<name ns="glyde" value="dgro-dgal-non-2:6|1a|2keto|3d|5n-glycolyl"/>
+		<name ns="glyde" value="dgro-dgal-non-2:6|1:a|2:keto|3:d|5n-glycolyl"/>
+		<property name="class" value="ic:Neu"/>
+		<ecdb:substituents>
+			<ecdb:substituent position="1">a</ecdb:substituent>
+			<ecdb:substituent position="2">keto</ecdb:substituent>
+			<ecdb:substituent position="3">d</ecdb:substituent>
+			<ecdb:substituent position="5">ngc</ecdb:substituent>
+		</ecdb:substituents>		
+		<disp:icon scheme="boston">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+		    <svg:path
+		       d="M -79.999999,91.688122 L -125.68812,46.000001 L -80.000001,0.31187820 L -34.311878,45.999999 L -79.999999,91.688122 z "
+		       transform="translate(130.8119,5.188122)"
+		       style="fill:#e9ffff;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+		       />
+		  </svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+		  <disp:anchor linkage="1" x="50" y="50" />
+		  <disp:anchor linkage="2" x="50" y="50" />
+		  <disp:anchor linkage="3" x="50" y="50" />
+		  <disp:anchor linkage="4" x="50" y="50" />
+		  <disp:anchor linkage="5" x="50" y="50" />
+		  <disp:anchor linkage="6" x="50" y="50" />
+		  <svg:svg>
+		    <svg:path
+		       d="M 50.000001,-2.0000000 L 60.282416,34.465559 L 99.454939,33.931118 L 67.951573,54.978752 L 80.564832,92.068885 L 50.812266,68.611480 L 19.435166,92.068883 L 32.550435,56.523775 L 0.54506158,33.931115 L 38.403310,35.420435 L 50.000001,-2.0000000 z "
+		       transform="translate(0.545061,4.000000)"
+		       style="fill:#111d2c;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+		       />
+		    <svg:path
+		       d="M 66.500000 54.750000 A 16.750000 16.750000 0 1 1  33.000000,54.750000 A 16.750000 16.750000 0 1 1  66.500000 54.750000 z"
+		       transform="translate(0.500000,0.000000)"
+		       style="fill:#bfcfe6;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+		       />
+		  </svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dneu">
+		<name ns="ecdb" value="dneu|1a|2keto|3d|5n"/>
+		<name ns="glyde" value="dgro-dgal-non-2:6|1:a|2:keto|3:d"/>
+		<name ns="stephan" value="-dgro-dgal-non|1:a|2:keto|3:d|5:n"/>
+		<name ns="ic" value="Neu"/>
+	</unit>
+	<unit id="dneu|1a|2keto|3d|5nac" >
+		<name ns="dkfz" value="D-Neu|1a|2keto|3d|5nac" />
+		<name ns="ic" value="NeuAc" />
+		<name ns="ic" value="Neu5Ac" />
+		<name ns="ecdb" value="dneu|1a|2keto|3d|5nac"/>
+		<name ns="glyde" value="dgro-dgal-non-2:6|1a|2keto|3d|5n-acetyl"/>
+		<name ns="glyde" value="dgro-dgal-non-2:6|1:a|2:keto|3:d|5n-acetyl"/>
+		<name ns="glyde" value="dgro-dgal-non-2:6|1:a|2:keto|3:d|1amino|5n-acetyl"/>
+		<name ns="stephan" value="-dgro-dgal-non|1:a|2:keto|3:d(5)n-acetyl"/>
+
+		<property name="class" value="ic:Neu"/>
+		<ecdb:substituents>
+			<ecdb:substituent position="1">a</ecdb:substituent>
+			<ecdb:substituent position="2">keto</ecdb:substituent>
+			<ecdb:substituent position="3">d</ecdb:substituent>
+			<ecdb:substituent position="5">nac</ecdb:substituent>
+		</ecdb:substituents>		
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="50" y="50" />
+			<disp:anchor linkage="2" x="100" y="50" />
+			<disp:anchor linkage="3" x="50" y="50" />
+			<disp:anchor linkage="4" x="50" y="50" />
+			<disp:anchor linkage="5" x="50" y="50" />
+			<disp:anchor linkage="6" x="50" y="50" />
+			<svg:svg>
+	    		<svg:path
+	       			d="M -79.999999,91.688122 L -125.68812,46.000001 L -80.000001,0.31187820 L -34.311878,45.999999 L -79.999999,91.688122 z "
+	       			transform="translate(130.8119,5.188122)"
+	       			style="fill:#c800c8;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+	       		/>
+			</svg:svg>
+		</disp:icon>
+		<disp:icon scheme="oxford">
+			<disp:anchor linkage="1" x="50" y="50" />
+			<disp:anchor linkage="2" x="50" y="50" />
+			<disp:anchor linkage="3" x="50" y="50" />
+			<disp:anchor linkage="4" x="50" y="50" />
+			<disp:anchor linkage="5" x="50" y="50" />
+			<disp:anchor linkage="6" x="50" y="50" />
+			<svg:svg>
+			    <svg:path
+			       d="M 50.000001,-2.0000000 L 60.282416,34.465559 L 99.454939,33.931118 L 67.951573,54.978752 L 80.564832,92.068885 L 50.812266,68.611480 L 19.435166,92.068883 L 32.550435,56.523775 L 0.54506158,33.931115 L 38.403310,35.420435 L 50.000001,-2.0000000 z "
+			       transform="translate(0.545061,4.000000)"
+			       style="fill:#111d2c;fill-opacity:1.0000000;stroke:#000000;stroke-width:1.0000000;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-opacity:1.0000000"
+			       />
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dmanp|6d" >
+		<name ns="dkfz" value="D-Manp|6d" />
+		<name ns="ic" value="Rha" />
+		<name ns="ecdb" value="dmanp|6d"/>
+		<name ns="glyde" value="dman-hex-1:5|6d"/>
+
+		<ecdb:substituents>
+			<ecdb:substituent position="6">d</ecdb:substituent>
+		</ecdb:substituents>
+		<property name="ringsize" value="6"/>
+		<property name="class" value="ic:Hex"/>
+	</unit>	
+	<unit id="lmanp|6d" >
+		<name ns="dkfz" value="L-Manp|6d" />
+		<name ns="ic" value="LRha" />
+		<name ns="ecdb" value="lmanp|6d"/>
+		<name ns="glyde" value="lman-hex-1:5|6d"/>
+	</unit>
+	<unit id="dxylf" >
+		<name ns="dkfz" value="D-Xylf" />
+		<name ns="ic" value="Xyl" />
+		<name ns="ecdb" value="dxylf"/>
+		<name ns="stephan" value="-dxyl-pen"/>
+		<name ns="glyde" value="dxyl-pen-1:5"/>
+
+		<property name="class" value="ic:Pent"/>
+		<disp:icon scheme="boston">
+			<svg:svg>
+				<svg:path
+			       d="M 87.142858,80 C 86.679372,80.327392 58.221745,55.223759 57.654295,55.225835 C 57.092637,55.22789 29.314618,80.549213 28.864666,80.213049 C 28.410073,79.873418 43.491156,45.051157 43.31383,44.512121 C 43.138314,43.978588 10.472425,25.384841 10.653093,24.853031 C 10.835624,24.315735 48.613873,27.898028 49.07173,27.562809 C 49.524913,27.231013 57.114302,-9.5818779 57.675913,-9.574391 C 58.243317,-9.5668269 66.510476,27.469413 66.970773,27.801272 C 67.426371,28.129744 104.78276,23.971873 104.94919,24.508311 C 105.11733,25.050281 72.448467,44.357644 72.275089,44.897962 C 72.103482,45.432765 87.601611,79.675951 87.142858,80 z "
+			       transform="matrix(1.0446722,0,0,1.1025997,-10.439242,11.018952)"
+			       style="fill:#faead5;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="dxylol">
+		<name ns="glyde" value="dxyl-pen-0:0|1:aldi"/>
+		<name ns="ic" value="dXyl-ol"/>
+	</unit>
+	<unit id="cer" >
+		<name ns="dkfz" value="Cer"/>
+		<name ns="ic" value="Cer" />
+		<name ns="ecdb" value="cer"/>
+		<property name="class" value="ic:AA"/>
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="0" y="50" />
+			<disp:anchor linkage="2" x="0" y="50" />
+			<disp:anchor linkage="3" x="0" y="50" />
+			<disp:anchor linkage="4" x="0" y="50" />
+			<disp:anchor linkage="5" x="0" y="50" />
+			<disp:anchor linkage="6" x="0" y="50" />
+			<svg:svg>
+	    		<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Cer</svg:text>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="asn" >
+		<name ns="dkfz" value="Asn"/>
+		<name ns="ic" value="Asn" />
+		<name ns="ecdb" value="asn"/>
+		<property name="class" value="ic:AA"/>
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="0" y="50" />
+			<disp:anchor linkage="2" x="0" y="50" />
+			<disp:anchor linkage="3" x="0" y="50" />
+			<disp:anchor linkage="4" x="0" y="50" />
+			<disp:anchor linkage="5" x="0" y="50" />
+			<disp:anchor linkage="6" x="0" y="50" />
+			<svg:svg>
+	    		<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Asn</svg:text>
+			</svg:svg>
+		</disp:icon>		
+	</unit>
+	<unit id="thr" >
+		<name ns="dkfz" value="Thr"/>
+		<name ns="ic" value="Thr" />
+		<name ns="ecdb" value="thr"/>
+		<name ns="glyde" value="lthr-hex-1:5|4,5:enx|6:a"/>
+		<name ns="stephan" value="-lthr"/>
+		<property name="class" value="ic:AA"/>
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="0" y="50" />
+			<disp:anchor linkage="2" x="0" y="50" />
+			<disp:anchor linkage="3" x="0" y="50" />
+			<disp:anchor linkage="4" x="0" y="50" />
+			<disp:anchor linkage="5" x="0" y="50" />
+			<disp:anchor linkage="6" x="0" y="50" />
+			<svg:svg>
+	    		<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Thr</svg:text>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="Ser" >
+		<name ns="dkfz" value="Ser"/>
+		<name ns="ic" value="Ser" />
+		<name ns="ecdb" value="ser"/>
+		<property name="class" value="ic:AA"/>
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="0" y="50" />
+			<disp:anchor linkage="2" x="0" y="50" />
+			<disp:anchor linkage="3" x="0" y="50" />
+			<disp:anchor linkage="4" x="0" y="50" />
+			<disp:anchor linkage="5" x="0" y="50" />
+			<disp:anchor linkage="6" x="0" y="50" />
+			<svg:svg>
+	    		<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Ser</svg:text>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="pp" >
+		<name ns="dkfz" value="PP"/>
+		<name ns="ic" value="PP" />
+		<name ns="ecdb" value="pp"/>
+		<property name="class" value="ic:Other"/>		
+	</unit>
+	<unit id="ino" >
+		<name ns="dkfz" value="Ino"/>
+		<name ns="ic" value="Ino" />
+		<name ns="ecdb" value="ino"/>
+		<property name="class" value="ic:Other"/>		
+	</unit>
+	<unit id="hso3" >
+		<name ns="dkfz" value="HSO3"/>
+		<name ns="ic" value="HSO3" />
+		<name ns="ecdb" value="hso3"/>
+		<property name="class" value="ic:HSO3"/>
+	</unit>
+</glycanDict>
