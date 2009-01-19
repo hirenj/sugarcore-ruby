@@ -305,6 +305,9 @@ class Monosaccharide
     parent.children.collect { |child| child[:residue] } - [ self ]
   end
 
+  def parent_position
+    @parent_position
+  end
 
   # Test for seeing if a residue is a parent of this residue
   #   mono.children[0][:residue].child_of?(mono)             # true
