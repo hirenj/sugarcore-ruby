@@ -247,6 +247,18 @@ __FOO__
     )
   end
     
+  def test_depth
+    sugar2 = build_sugar_from_string( LARGE_STRUCTURE )
+    depths = sugar2.leaves.collect { |leaf|
+      sugar2.depth(leaf)
+    }
+    depths2 = sugar2.leaves.collect { |leaf|
+      sugar2.depth(leaf.parent)
+    }
+    assert_equal([0,0,0], depths)
+    assert_equal([1,1,4], depths2)
+  end
+    
   def test_traversals
     sugar = build_sugar_from_string( LARGE_STRUCTURE )
     results = []
