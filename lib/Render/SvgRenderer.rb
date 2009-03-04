@@ -292,8 +292,8 @@ class SvgRenderer
     if use_prototypes?
       subst.add_attribute('transform',"rotate(#{angle},#{-1*linkage.position[:x2]},#{-1*residue.centre[:y]})")
     end
-
-    subst.text = " &#8594; #{linkage.get_position_for(parent)}"
+    linkage_position = linkage.get_position_for(parent)
+    subst.text = " &#8594; #{linkage_position == 0 ? '?' : linkage_position}"
     return subst
   end
 

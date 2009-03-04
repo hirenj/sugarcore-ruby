@@ -256,7 +256,7 @@ class Sugar
         if start_residue.parent && start_residue.parent.name(:ic) != 'GlcNAc'
           return []
         else
-          if start_residue.parent.name(:ic) == 'GlcNAc'
+          if start_residue.parent && start_residue.parent.name(:ic) == 'GlcNAc'
             return [] unless [3,4].include?( start_residue.paired_residue_position  )
           end          
         end

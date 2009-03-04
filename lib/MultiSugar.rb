@@ -103,6 +103,51 @@ module Sugar::MultiSugar
     }
     return matched.keys
   end
+
+  def get_chains_from_residue(start_residue=@root)
+    if start_residue.name(:ic) == 'GlcNAc' && (start_residue == @root || start_residue.anomer == 'b')
+      positions = [3,4]
+      next_name = 'Gal'
+      if start_residue.parent 
+        if start_residue.parent.name(:ic) != 'Man' && start_residue.parent.name(:ic) != 'Gal' 
+          return []
+        else
+          if start_residue.parent.name(:ic) == 'Gal'
+            return [] unless [3,6].include?( start_residue.paired_residue_position  )
+          end
+        end
+      end
+    elsif start_residue.name(:ic) == 'Gal' && (start_residue == @root || start_residue.anomer == 'b')
+      positions = [3,6]
+      next_name = 'GlcNAc'
+      if start_residue.parent && start_residue.parent.name(:ic) != 'GlcNAc'
+        return []
+      else
+        if start_residue.parent.name(:ic) == 'GlcNAc'
+          return [] unless [3,4].include?( start_residue.paired_residue_position  )
+        end          
+      end
+    else
+      return []
+    end
+    my_chains = []      
+    positions.each { |pos|
+      residues = start_residue.residue_at_position(pos)
+      residues.each { |residue|
+        if residue && residue.name(:ic) == next_name
+          new_chains = get_chains_from_residue(residue).collect {|arr| [start_residue] + arr }
+          if new_chains.size == 0
+            new_chains = [[start_residue,residue]]
+          end
+          my_chains += new_chains
+        end
+      }
+    }
+    if my_chains.size == 0
+      my_chains = [[start_residue]]
+    end
+    return my_chains
+  end
   
   def self.extend_object(sug)
     sug.residue_composition.each { |res|

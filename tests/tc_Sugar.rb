@@ -343,9 +343,27 @@ __FOO__
     assert_equal('Gal(a1-3)[GlcNAc(b1-4)Fuc(b1-6)][GlcNAc(b1-4)Gal(b1-3)]GlcNAc', sugar.sequence)
   end
 
+  def test_sugar_union_subtract
+    sugar = build_multi_sugar_from_string("Gal(a1-3)GlcNAc")
+    sugar2 = build_sugar_from_string("GlcNAc(b1-4)Fuc(b1-6)GlcNAc")
+    sugar3 = build_sugar_from_string("Gal(b1-3)GlcNAc")
+    sugar4 = build_sugar_from_string("GlcNAc(b1-4)Gal(b1-3)GlcNAc")
+    sugar.union!(sugar2).union!(sugar3).union!(sugar4)
+    
+    small_sug = build_sugar_from_string('GlcNAc(b1-4)Gal(b1-3)GlcNAc')
+    
+    assert_equal(['Gal','GlcNAc','Fuc'], sugar.subtract(small_sug).collect { |r| r.name(:ic) } )
+  end
+
   def test_sugar_unique_maker
     sugar = build_multi_sugar_from_string( 'Gal(b1-3)GlcNAc(a1-u)[Fuc(a1-3)GlcNAc(a1-u)]GlcNAc')
     assert_equal('Fuc(a1-3)[Gal(b1-3)]GlcNAc(a1-u)GlcNAc', sugar.get_unique_sugar.extend(  Sugar::IO::CondensedIupac::Writer ).sequence)
+  end
+
+  def test_unique_sugar_subtraction
+    sugar = build_multi_sugar_from_string( 'Gal(b1-3)GlcNAc(a1-u)[Fuc(a1-3)GlcNAc(a1-u)][Fuc(a1-3)GlcNAc(b1-4)]GlcNAc(b1-4)GlcNAc').get_unique_sugar
+    small_sug = build_sugar_from_string( 'GlcNAc(b1-4)GlcNAc')
+    assert_equal(['Gal','GlcNAc','Fuc','Fuc','GlcNAc'],sugar.subtract(small_sug).collect { |r| r.name(:ic) })
   end
 
   def test_sugar_union_with_unknowns
@@ -408,7 +426,7 @@ __FOO__
     sugar = build_sugar_from_string('NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-u)[NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-3)[NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-6)]Gal(b1-4)GlcNAc(b1-u)]Gal(b1-4)GlcNAc(b1-u)[NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-u)]Gal(b1-4)GlcNAc(b1-3)Gal')
     chains = sugar.get_chains_from_residue
     assert_equal([3], chains.collect { |c| c.size })
-    assert_equal(17, (sugar.residue_composition - chains.flatten.uniq).size )
+    assert_equal(16, (sugar.residue_composition - chains.flatten.uniq).size )
     
   end
 
