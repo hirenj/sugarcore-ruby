@@ -83,6 +83,12 @@ class SvgRenderer
         anchors[4] = { :x => 100, :y => 50 }
         anchors[5] = { :x => 100, :y => 50 }
         anchors[6] = { :x => 100, :y => 50 }
+
+        XPath.each(res.raw_data_node, "./disp:icon[@scheme='text']/disp:anchor", { 'disp' => DISPLAY_ELEMENT_NS }) { |anchor|
+          anchors[anchor.attribute("linkage").value().to_i] = { :x => 100 - anchor.attribute("x").value().to_i,
+                                                                :y => 100 - anchor.attribute("y").value().to_i }
+        }
+
       else
         prototypes[res_id] = XPath.first(res.raw_data_node, "disp:icon[@scheme='#{scheme}']/svg:svg", { 'disp' => DISPLAY_ELEMENT_NS, 'svg' => SVG_ELEMENT_NS })
       end
