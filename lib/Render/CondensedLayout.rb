@@ -1,4 +1,7 @@
+require "DebugLog"
+
 class CondensedLayout
+  include DebugLog
 
   DEFAULT_NODE_DIMENSIONS = { :width => 100, :height => 100 }
   DEFAULT_NODE_SPACING = { :x => 150, :y => 100 }
@@ -23,6 +26,7 @@ class CondensedLayout
   end
 
   def remove_layout(sugar)
+    @seen_stubs = []
     sugar.residue_composition.each { |res|
       res.position[:x1] = 0
       res.position[:y1] = 0
@@ -125,7 +129,7 @@ class CondensedLayout
   end
 
   def do_sibling_bunching(sugar)
-    (0..(sugar.depth-1)).to_a.reverse.each { |dep|
+    (0..(sugar.residue_height-1)).to_a.reverse.each { |dep|
       sugar.residues_at_depth_by_parent(dep).each { |sib_group|        
         group_siblings(sib_group)
       }
@@ -152,7 +156,7 @@ class CondensedLayout
     
     delta = 0
     
-    delta = first_up.box[:y1] - first_down.box[:y2] - 100 if (first_up && first_down)
+    delta = first_up.box[:y1] - first_down.box[:y2] - DEFAULT_NODE_SPACING[:y] if (first_up && first_down)
     
     if delta > 0
       first_up.move_box(first_up.position[:x1], center_y )
@@ -178,7 +182,7 @@ class CondensedLayout
   end
 
   def do_center_boxes_more(sugar)
-    (0..(sugar.depth-1)).to_a.reverse.each { |dep|
+    (0..(sugar.residue_height-1)).to_a.reverse.each { |dep|
       sugar.residues_at_depth_by_parent(dep).each { |sib_group|
         
 #        y1s = sib_group.collect { |r| r.position[:y1] }

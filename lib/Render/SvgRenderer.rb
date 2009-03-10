@@ -9,7 +9,7 @@ class SvgRenderer
   SVG_ELEMENT_NS = "http://www.w3.org/2000/svg"
   XLINK_NS = "http://www.w3.org/1999/xlink"
   
-  attr_reader :min_y,:max_x,:max_y
+  # attr_reader :min_y,:max_x,:max_y
   attr_accessor :font_size
   
   def use_prototypes?
@@ -21,35 +21,35 @@ class SvgRenderer
     @use_prototypes = false
   end
   
-  def min_y=(min_y)
-    if @min_y == nil
-      @min_y = min_y
-    else
-      if min_y < @min_y
-        @min_y = min_y
-      end
-    end
-  end
-
-  def max_y=(max_y)
-    if @max_y == nil
-      @max_y = max_y
-    else
-      if max_y > @max_y
-        @max_y = max_y
-      end
-    end
-  end
-
-  def max_x=(max_x)
-    if @max_x == nil
-      @max_x = max_x
-    else
-      if max_x > @max_x
-        @max_x = max_x
-      end
-    end
-  end
+  # def min_y=(min_y)
+  #   if @min_y == nil
+  #     @min_y = min_y
+  #   else
+  #     if min_y < @min_y
+  #       @min_y = min_y
+  #     end
+  #   end
+  # end
+  # 
+  # def max_y=(max_y)
+  #   if @max_y == nil
+  #     @max_y = max_y
+  #   else
+  #     if max_y > @max_y
+  #       @max_y = max_y
+  #     end
+  #   end
+  # end
+  # 
+  # def max_x=(max_x)
+  #   if @max_x == nil
+  #     @max_x = max_x
+  #   else
+  #     if max_x > @max_x
+  #       @max_x = max_x
+  #     end
+  #   end
+  # end
     
   def initialise_prototypes
     throw Exception.new("Sugar is not renderable") unless sugar.kind_of? Renderable
@@ -109,7 +109,9 @@ class SvgRenderer
         anchors = nil_mono.offsets
       end
       res.offsets = anchors
-      res.dimensions = { :width => 100, :height => 100 }
+      unless res.dimensions[:width] != 0 && res.dimensions[:height] != 0
+        res.dimensions = { :width => 100, :height => 100 }
+      end
     }
   end
   
@@ -206,14 +208,17 @@ class SvgRenderer
     xpos = nil
     ypos = nil
     
+    
     delta_x = (linkage.position[:x1] - linkage.position[:x2]).abs
-    if delta_x < 5
-      xpos = -1 * (residue.position[:x1] - 25 )
+
+    if false && delta_x < 5
+      xpos = -1 * (linkage.position[:x1] - 25 )
       if linkage.position[:y1] > linkage.position[:y2]
-        ypos = linkage.position[:y1] - 10
+        ypos = residue.position[:y1] - 25
       else
-        ypos = linkage.position[:y2] - 10
+        ypos = residue.position[:y2] + 25
       end
+      ypos *= -1
     else
       xpos = -1 * (residue.position[:x1] - 25)
       if linkage.position[:y1] < linkage.position[:y2]
@@ -230,6 +235,12 @@ class SvgRenderer
     
     if tan_x != 0
       angle = (180 / Math::PI ) * Math.atan( tan_y / tan_x )
+    else
+      if tan_y > 0
+        angle = 90
+      else
+        angle = -90
+      end
     end
     
     
@@ -260,12 +271,13 @@ class SvgRenderer
     ypos = nil
     
     delta_x = (linkage.position[:x1] - linkage.position[:x2]).abs
-    if delta_x < 5
+    # Disable shifting the position for stub residues
+    if false && delta_x < 5
       xpos = -1 * (residue.position[:x1] - font_size )
       if linkage.position[:y1] > linkage.position[:y2]
-        ypos = linkage.position[:y1] - 10
+        ypos = -1 * (residue.position[:y1] - 25)
       else
-        ypos = linkage.position[:y2] - 10
+        ypos = -1 * (residue.position[:y2] + 25)
       end
     else
       xpos = -1 * (residue.position[:x1] - 15 - (2 * font_size) )
@@ -284,6 +296,12 @@ class SvgRenderer
     
     if tan_x != 0
       angle = (180 / Math::PI ) * Math.atan( tan_y / tan_x )
+    else
+      if tan_y > 0
+        angle = 90
+      else
+        angle = -90
+      end
     end
 
     subst.add_attributes({  'x' => xpos, 
@@ -389,17 +407,25 @@ class SvgRenderer
       icon = Document.new(res.prototype.to_s).root
     end
     
+    x_pos = res.dimensions[:width] + res.position[:x1]
+    y_pos = res.dimensions[:height] + res.position[:y1]
+
+    
     #icon.add_attribute('transform',"translate(#{res.position[:x1]+100},#{res.position[:y1]+100}) rotate(180)")
     if ( self.use_prototypes? )
-    icon.add_attribute('x',"#{-100-res.position[:x1]}")
-    icon.add_attribute('y',"#{-100-res.position[:y1]}")
+    icon.add_attribute('x',"#{-1*x_pos}")
+    icon.add_attribute('y',"#{-1*y_pos}")
     else
-      icon.add_attribute('transform',"translate(#{-100-res.position[:x1]},#{-100-res.position[:y1]})")      
+      icon.add_attribute('transform',"translate(#{-1*x_pos},#{-1*y_pos})")      
     end
-    self.min_y = -100-res.position[:y1]
-    self.max_x = -100-res.position[:x2]
-    self.max_y = -100-res.position[:y2]
-        
+    # self.min_y = -res.dimensions[:height]-res.position[:y1]
+    # self.max_x = -res.dimensions[:width]-res.position[:x2]
+    # self.max_y = -res.dimensions[:height]-res.position[:y2]
+    
+    icon.add_attribute('width',res.dimensions[:width])
+    icon.add_attribute('height',res.dimensions[:height])
+
+    
     if res.labels.length > 0 
       icon.add_attribute('class', res.labels.join(" "))
     end

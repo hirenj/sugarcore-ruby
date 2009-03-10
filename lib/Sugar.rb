@@ -170,12 +170,16 @@ class Sugar
   		}    	
     end
 
-    def depth(start_residue=@root)
+    def residue_height(start_residue=@root,absolute=false)
       absolute_depth = leaves(start_residue).collect { |l| get_path_to_root(l).size }.max
-      if start_residue != @root
+      if ! absolute && start_residue != @root
         absolute_depth -= get_path_to_root(start_residue).size
       end
       return absolute_depth
+    end
+
+    def depth(a_residue)
+      return get_path_to_root(a_residue).size
     end
 
     def residues_at_depth(depth,start_residue=@root)
@@ -242,23 +246,32 @@ class Sugar
         positions = [3,4]
         next_name = 'Gal'
         if start_residue.parent 
-          if start_residue.parent.name(:ic) != 'Man' && start_residue.parent.name(:ic) != 'Gal' 
+          # Allowed parents of a GlcNAc residue are Man, Gal and GalNAc
+          if start_residue.parent.name(:ic) != 'Man' && start_residue.parent.name(:ic) != 'Gal' && start_residue.parent.name(:ic) != 'GalNAc'
             return []
           else
+            # Chains coming off Gal should be on a 3 and 6 linkage
             if start_residue.parent.name(:ic) == 'Gal'
               return [] unless [3,6].include?( start_residue.paired_residue_position  )
+            end
+            # Chains off the core of the O-linked glycans
+            if start_residue.parent.name(:ic) == 'GalNAc'
+              return [] unless start_residue.parent == @root
             end
           end
         end
       elsif start_residue.name(:ic) == 'Gal' && (start_residue == @root || start_residue.anomer == 'b')
         positions = [3,6]
         next_name = 'GlcNAc'
-        if start_residue.parent && start_residue.parent.name(:ic) != 'GlcNAc'
+        if start_residue.parent && ! ['GlcNAc','GalNAc'].include?(start_residue.parent.name(:ic))
           return []
         else
           if start_residue.parent && start_residue.parent.name(:ic) == 'GlcNAc'
             return [] unless [3,4].include?( start_residue.paired_residue_position  )
-          end          
+          end
+          if start_residue.parent && start_residue.parent.name(:ic) == 'GalNAc'
+            return [] unless [3,4].include?( start_residue.paired_residue_position) && start_residue.parent == @root
+          end
         end
       else
         return []

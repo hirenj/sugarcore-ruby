@@ -250,10 +250,10 @@ __FOO__
   def test_depth
     sugar2 = build_sugar_from_string( LARGE_STRUCTURE )
     depths = sugar2.leaves.collect { |leaf|
-      sugar2.depth(leaf)
+      sugar2.residue_height(leaf)
     }
     depths2 = sugar2.leaves.collect { |leaf|
-      sugar2.depth(leaf.parent)
+      sugar2.residue_height(leaf.parent)
     }
     assert_equal([0,0,0], depths)
     assert_equal([1,1,4], depths2)
@@ -428,6 +428,10 @@ __FOO__
     assert_equal([3], chains.collect { |c| c.size })
     assert_equal(16, (sugar.residue_composition - chains.flatten.uniq).size )
     
+    sugar = build_sugar_from_string('GlcNAc(b1-3)Gal(b1-3)[NeuAc(a2-6)]GalNAc')
+    start_res = sugar.residue_composition.select{|res| res.name(:ic) == 'Gal' }[0]
+    chains = sugar.get_chains_from_residue(start_res)
+    assert_equal([2],chains.collect { |c| c.size })
   end
 
   

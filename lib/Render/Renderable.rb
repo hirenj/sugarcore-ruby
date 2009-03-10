@@ -11,6 +11,16 @@ module Rectangle
     { :x => ( self[:x1] + self[:x2] ) / 2 , :y => ( self[:y1] + self[:y2] ) / 2 }
   end
   
+  def union(other_rect)
+    return self unless other_rect
+    
+    min_x1 = self[:x1] < other_rect[:x1] ? self[:x1] : other_rect[:x1]
+    max_x2 = self[:x2] > other_rect[:x2] ? self[:x2] : other_rect[:x2]
+    min_y1 = self[:y1] < other_rect[:y1] ? self[:y1] : other_rect[:y1]
+    max_y2 = self[:y2] > other_rect[:y2] ? self[:y2] : other_rect[:y2]
+    return { :x1 => min_x1, :x2 => max_x2, :y1 => min_y1, :y2 => max_y2 }.extend(Rectangle)
+  end
+  
 end
 
 module Renderable
@@ -75,8 +85,8 @@ module Renderable
   end
 
   def move_absolute(new_x,new_y)
-    delta_x = position[:x1] - new_x
-    delta_y = position[:y1] - new_y
+    delta_x = new_x - position[:x1]
+    delta_y = new_y - position[:y1]
     translate(delta_x,delta_y)
   end
 
@@ -101,6 +111,17 @@ module Renderable::Residue
     }
   end
   
+  def scale_by_factor(factor=1)
+    @dimensions = { :width => self.dimensions[:width]*factor, :height => self.dimensions[:height]*factor }
+    new_offsets = offsets.each { |key,pos|
+      if pos != nil
+        pos[:x] *= factor
+        pos[:y] *= factor
+      end
+    }
+    @offsets = new_offsets
+  end
+  
   def offset( linkage )
     if ( an_offset = offsets[linkage.get_position_for(self)] ) != nil
       return  an_offset
@@ -115,13 +136,16 @@ module Renderable::Residue
     @offsets
   end
 
-  def box
+  def box(&block)
     min_x = nil
     min_y = nil
     max_x = nil
     max_y = nil
 
     children.each { |child|
+      if block_given?
+        next unless block.call(child[:residue])
+      end
       link_box = child[:link].get_paired_residue(self).box
 
       if min_x == nil || link_box[:x1] < min_x
@@ -154,6 +178,40 @@ module Renderable::Residue
 
   end
   
+  def children_box(&block)
+    min_x = nil
+    min_y = nil
+    max_x = nil
+    max_y = nil
+
+    children.each { |child|
+      if block_given?
+        next unless block.call(child[:residue])
+      end
+      link_box = child[:link].get_paired_residue(self).box(&block)
+
+      if min_x == nil || link_box[:x1] < min_x
+        min_x = link_box[:x1]
+      end
+      if max_x == nil || link_box[:x2] > max_x
+        max_x = link_box[:x2]
+      end
+      if min_y == nil || link_box[:y1] < min_y
+        min_y = link_box[:y1]
+      end
+      if max_y == nil || link_box[:y2] > max_y
+        max_y = link_box[:y2]
+      end      
+    }    
+
+    if min_x == nil || min_y == nil || max_x == nil || max_y == nil
+      return nil
+    end
+
+    return { :x1 => min_x, :x2 => max_x, :y1 => min_y, :y2 => max_y }.extend(Rectangle)
+
+  end
+  
 end
 
 module Renderable::Link
@@ -171,10 +229,11 @@ module Renderable::Link
     bottom_residue = second_residue
     top_residue = first_residue
     
-    if first_residue.position[:y1] < second_residue.position[:y2]
+    if first_residue.position[:y1] < second_residue.position[:y2] && first_residue.position[:y2] > second_residue.position[:y2]
       bottom_residue = first_residue
       top_residue = second_residue
     end
+    
 
     result= { :x1 => left_residue.position[:x1] + left_residue.offset(self)[:x],
       :x2 => right_residue.position[:x1] + right_residue.offset(self)[:x],
