@@ -216,6 +216,13 @@ end
 
 module Renderable::Link
   include Renderable
+
+  def label_callbacks
+    if ( ! @callbacks )
+      @callbacks = Array.new()
+    end
+    @callbacks
+  end
   
   def position
     left_residue = second_residue
@@ -322,7 +329,6 @@ module Renderable::Sugar
     @underlays
   end
 
-  
   def box
     @root.box
   end

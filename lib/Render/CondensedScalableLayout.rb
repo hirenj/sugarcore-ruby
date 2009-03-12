@@ -2,6 +2,14 @@ require "DebugLog"
 
 class CondensedScalableLayout < CondensedLayout
   include DebugLog
+  
+  attr_accessor :scaling_symbol
+  
+  def initialize()
+    super()
+    @scaling_symbol = :hots
+  end
+  
   # Rules for layout of sugars
   # If there's a Type I/II chain put that in the centre, and put the decorations on opposite sides
   # If there are two Type I/II chains as children, split the difference
@@ -11,29 +19,35 @@ class CondensedScalableLayout < CondensedLayout
     remove_layout(sugar)
     do_initial_layout(sugar)
     setup_scaling(sugar)
+    setup_lacnacs(sugar)
     seen_residues = do_chain_layout(sugar)
     seen_residues += do_stubs(sugar,seen_residues)
     do_basic_layout(sugar,seen_residues)
     do_box_layout(sugar)
     do_sibling_bunching(sugar)
     do_center_boxes_more(sugar)
+    do_sibling_bunching(sugar)
   end
 
   def setup_scaling(sugar)    
-    max_hits = sugar.residue_composition.inject(0) { |max,res| [max,res.hits].max }
+    return unless sugar.root.respond_to?(self.scaling_symbol)
     sugar.residue_composition.each { |res|
-      res.scale_by_factor(Math.log(Math.log(res.hits)+1))
+      res.scale_by_factor(Math.log(Math.log(res.method(self.scaling_symbol).call)+10))
       res.position[:x2] = res.position[:x1] + res.dimensions[:width]
       res.position[:y2] = res.position[:y1] + res.dimensions[:height]
+    }
+  end
+
+  def setup_lacnacs(sugar)
+    lacnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GalNAc' && r.parent && r.parent.name(:ic) == 'GlcNAc'}
+    lacnacs.each { |lacnac|
+      lacnac.scale_by_factor(0.5)
     }
   end
 
   def do_center_boxes_more(sugar)
     (0..(sugar.residue_height-1)).to_a.reverse.each { |dep|
       sugar.residues_at_depth_by_parent(dep).each { |sib_group|
-
-#        y1s = sib_group.collect { |r| r.position[:y1] }
-#        new_y1 = ((y1s.max - y1s.min) / 2) + y1s.min
 
         if sib_group[0] != nil && sib_group[0].parent != nil
           par_res = sib_group[0].parent
@@ -68,18 +82,27 @@ class CondensedScalableLayout < CondensedLayout
     center_y = parent.position[:y1]
     
     positive_siblings = siblings.select { |r| r.position[:y1] > center_y }
-    negative_siblings = siblings - positive_siblings
+    
+    center_residues = siblings.select { |r| r.position[:y1] == center_y }
+    
+    positive_minimum = (center_residues.collect { |r| r.box[:y2] }).max || center_y
+    negative_minimum = (center_residues.collect { |r| r.box[:y1] }).min || center_y
+    
+    negative_siblings = siblings.select { |r| r.position[:y1] < center_y }
     
     first_down = negative_siblings[0]
     first_up = positive_siblings[0]
     
     delta = 0
     
-    delta = first_up.box[:y1] - first_down.box[:y2] - node_spacing[:y] if (first_up && first_down)
+    first_down_top = first_down ? first_down.box[:y2] : positive_minimum
+    first_up_bottom = first_up ? first_up.box[:y1] : negative_minimum
+        
+    delta = first_up_bottom - first_down_top - node_spacing[:y]
     
     if delta > 0
-      first_up.move_box(first_up.position[:x1], center_y )
-      first_down.move_box(first_down.position[:x1], center_y - node_spacing[:y] - first_down.box.height)
+      first_up.move_box(first_up.position[:x1], positive_minimum ) if first_up
+      first_down.move_box(first_down.position[:x1], negative_minimum - node_spacing[:y] - first_down.box.height) if first_down
     end
     
     current = positive_siblings.shift    
@@ -235,7 +258,8 @@ class CondensedScalableLayout < CondensedLayout
       
       if residue.name(:ic) == 'Gal'
         debug("CHAINLAYOUT:Pushing up the y delta for a Gal-multiple-chain")
-        max_sibling_height = residue.siblings.select { |r| r.name(:ic) != 'Gal' && r.anomer == 'b' }.collect { |r| r.dimensions[:height]}.max || 0
+        max_sibling_height = residue.siblings.select { |r| r.name(:ic) == 'Gal' && r.anomer == 'b' }.collect { |r| r.dimensions[:height]}.max || 0
+        debug("CHAINLAYOUT:Max sibling height is #{max_sibling_height} total ")
         y_delta = residue.paired_residue_position == 3 ? -0.5*(node_spacing[:y]+max_sibling_height) : 0.5*(node_spacing[:y]+max_sibling_height)
         if residue.siblings.select { |r| r.name(:ic) == 'Gal' && r.anomer == 'b'}.size == 0
           y_delta = 0

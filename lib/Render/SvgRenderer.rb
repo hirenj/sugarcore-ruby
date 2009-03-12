@@ -8,6 +8,13 @@ class SvgRenderer
   DISPLAY_ELEMENT_NS = "http://penguins.mooh.org/research/glycan-display-0.1"
   SVG_ELEMENT_NS = "http://www.w3.org/2000/svg"
   XLINK_NS = "http://www.w3.org/1999/xlink"
+
+
+  CALLBACK_HIDE_ELEMENT = Proc.new { |element|
+    element.add_attribute('display','none')
+  }
+
+
   
   # attr_reader :min_y,:max_x,:max_y
   attr_accessor :font_size
@@ -20,37 +27,11 @@ class SvgRenderer
     debug("Switching off prototypes")
     @use_prototypes = false
   end
-  
-  # def min_y=(min_y)
-  #   if @min_y == nil
-  #     @min_y = min_y
-  #   else
-  #     if min_y < @min_y
-  #       @min_y = min_y
-  #     end
-  #   end
-  # end
-  # 
-  # def max_y=(max_y)
-  #   if @max_y == nil
-  #     @max_y = max_y
-  #   else
-  #     if max_y > @max_y
-  #       @max_y = max_y
-  #     end
-  #   end
-  # end
-  # 
-  # def max_x=(max_x)
-  #   if @max_x == nil
-  #     @max_x = max_x
-  #   else
-  #     if max_x > @max_x
-  #       @max_x = max_x
-  #     end
-  #   end
-  # end
-    
+
+  def prototype_for_residue(residue)    
+    return prototypes ? prototypes[residue.name(:id)] : nil
+  end
+     
   def initialise_prototypes
     throw Exception.new("Sugar is not renderable") unless sugar.kind_of? Renderable
     nil_mono = Monosaccharide.Factory(sugar.root.class,'ecdb:nil')
@@ -134,22 +115,20 @@ class SvgRenderer
   	doc.root.add_namespace('xlink', XLINK_NS)
     
     definitions = doc.root.add_element('svg:defs')
-    
+
   	drawing = doc.root.add_element('svg:g')
 
-  	sugar.underlays.each { |el|
-  	  drawing.add_element(el)
-  	}
-
-
+  	underlays = drawing.add_element('svg:g')
   	linkages = drawing.add_element('svg:g')
   	residues = drawing.add_element('svg:g')
   	labels = drawing.add_element('svg:g')
+  	overlays = drawing.add_element('svg:g')
 
-  	sugar.overlays.each { |el|
-  	  drawing.add_element(el)
+    
+    sugar.callbacks.each { |callback|
+  	  callback.call(doc.root,self)
   	}
-
+    
   	icons = Array.new()
 
     sugar.residue_composition.each { |res|
@@ -169,7 +148,6 @@ class SvgRenderer
     }.each { |ic|
       residues.add_element ic
     }
-    
     
     if ( self.use_prototypes? )    
       prototypes.each { |key,val|
@@ -196,6 +174,16 @@ class SvgRenderer
       doc.root.add_attribute('height', ((sugbox.height + padding) * width).floor)
     end
   	doc.root.add_attribute('preserveAspectRatio', 'xMinYMin')
+
+  	sugar.underlays.each { |el|
+  	  underlays.add_element(el)
+  	}
+
+  	sugar.overlays.each { |el|
+  	  overlays.add_element(el)
+  	}
+
+  	
     return doc
   end
 
@@ -256,10 +244,16 @@ class SvgRenderer
     if use_prototypes?
       anomer.add_attribute('transform',"rotate(#{angle},#{-1*linkage.position[:x2]},#{-1*residue.centre[:y]})")
     end
+    
     res_anomer = residue.anomer
     res_anomer = res_anomer.gsub(/b/,'&#946;')
     res_anomer = res_anomer.gsub(/a/,'&#945;')
     anomer.text= residue.anomer ? (res_anomer+linkage.get_position_for(residue).to_s) : ''
+
+    linkage.label_callbacks.each { |callback|
+      callback.call(anomer)
+    }
+
     return anomer    
   end
 
@@ -318,6 +312,11 @@ class SvgRenderer
     end
     linkage_position = linkage.get_position_for(parent)
     subst.text = " &#8594; #{linkage_position == 0 ? '?' : linkage_position}"
+
+    linkage.label_callbacks.each { |callback|
+      callback.call(subst)
+    }
+
     return subst
   end
 
@@ -435,6 +434,186 @@ class SvgRenderer
     }
     
     return icon
+  end
+  
+  attr_accessor :chain_background_width
+  attr_accessor :chain_background_padding
+  
+  def render_chains(sugar,chains,chain_class)
+    chains_container = Element.new('svg:g')
+    sugar.underlays << chains_container
+    chains_container.add_attribute('class',chain_class)
+        
+    chains.each { |chain|
+      chain_container = Element.new('svg:g')
+      chain.reverse.each { |chain_el|
+        render_chain_residue(chain_container,chain_el)
+      }
+      chains_container.add_element(chain_container)
+    }
+    
+  end  
+
+  def render_simplified_chains(sugar,chains,chain_class)
+    chains_container = Element.new('svg:g')
+    sugar.underlays << chains_container
+    chains_container.add_attribute('class',chain_class)
+        
+    chains.each { |chain|
+      chain_container = Element.new('svg:g')
+      chain.reverse.each { |chain_el|
+        render_simple_chain_residue(chain_container,chain_el)
+      }
+      chains_container.add_element(chain_container)
+    }
+    
+  end  
+
+  
+  def render_valid_decorations(sugar,decorations)
+    decorations_container = Element.new('svg:g')
+    decorations_container.add_attribute('class','sugar_decorations valid_sugar_decorations')
+
+    sugar.underlays << decorations_container      
+    decorations.each { |residue|
+      render_decoration(decorations_container,residue,'#ccccff')
+    }
+  end
+
+  def render_invalid_decorations(sugar,decorations)
+    decorations_container = Element.new('svg:g')
+    decorations_container.add_attribute('class','sugar_decorations invalid_sugar_decorations')
+    sugar.underlays << decorations_container      
+    decorations.each { |residue|
+      render_decoration(decorations_container,residue,'#ffdddd')
+    }
+  end
+  
+  def render_decoration(container_el, residue,colour)
+    return unless residue
+    residue.callbacks.push( callback_make_residue_background(container_el,residue,chain_background_width+chain_background_padding,colour,colour) )    
+    linkage = residue.linkage_at_position
+
+    return unless linkage
+    linkage.callbacks.push( callback_make_linkage_background(container_el,residue.linkage_at_position,chain_background_width,colour,colour) )
+  end
+
+  def render_chain_residue(container_el,residue)
+    render_chain_residue_node(container_el,residue)
+    render_chain_linkage(container_el,residue.linkage_at_position)
+  end
+  
+  def render_simple_chain_residue(container_el,residue)
+    render_chain_residue(container_el,residue)
+    residue.linkage_at_position.label_callbacks.push(callback_hide_element)
+    residue.linkage_at_position.callbacks.push(callback_hide_element)
+  end
+  
+  def render_chain_residue_node(container_el,residue)
+    return unless residue
+    residue.callbacks.push( callback_make_residue_background(container_el,residue,chain_background_width+chain_background_padding,'#ddffdd','#ddffdd') )
+  end
+  
+  def render_chain_linkage(container_el,linkage)
+    return unless linkage
+    linkage.callbacks.push( callback_make_linkage_background(container_el,linkage,chain_background_width,'#ddffdd','#ddffdd') )    
+  end
+  
+  def callback_make_linkage_background(container_element,linkage,linkage_padding,fill_colour,stroke_colour)
+    Proc.new { |element|
+      x1 = -1*linkage.first_residue.centre[:x]
+      y1 = -1*linkage.first_residue.centre[:y]
+      x2 = -1*linkage.second_residue.centre[:x]
+      y2 = -1*linkage.second_residue.centre[:y]
+      link_width = (x2-x1).abs
+      link_height = (y2-y1).abs
+      link_length = Math.hypot(link_width,link_height)
+      deltax = -1 * (linkage_padding * link_height / link_length).to_i
+      deltay = (linkage_padding * link_width / link_length).to_i
+      points = ""
+      if y2 < y1
+        points = "#{x1-deltax},#{y1+deltay} #{x2-deltax},#{y2+deltay} #{x2+deltax},#{y2-deltay} #{x1+deltax},#{y1-deltay}"
+      else
+        points = "#{x1+deltax},#{y1+deltay} #{x2+deltax},#{y2+deltay} #{x2-deltax},#{y2-deltay} #{x1-deltax},#{y1-deltay}"              
+      end
+
+      back = Element.new('svg:polygon')
+      back.add_attributes({'points' => points, 'class' => 'sugar_chain_linkage_background sugar_chain_background', 'stroke'=>fill_colour,'fill'=>stroke_colour,'stroke-width'=>'1.0'})
+      container_element.add_element(back)      
+    }
+  end
+  
+  def callback_make_residue_background(container_element,residue,radius,fill_colour,stroke_colour)
+    Proc.new { |element|
+      cx = -1*residue.centre[:x]
+      cy = -1*residue.centre[:y]
+
+      back = Element.new('svg:circle')
+      back.add_attributes({'cx' => cx, 'cy' => cy, 'class' => 'sugar_chain_residue_background sugar_chain_background','r' => radius, 'fill'=> fill_colour,'stroke' => stroke_colour, 'stroke-width' => '1.0' })
+      container_element.add_element(back)
+    }
+  end
+  
+  def callback_make_element_label(sugar_el,content,border_colour)
+    lambda { |element|
+
+      bad_linkage = Element.new('svg:g')
+      bad_linkage.add_attributes({'id' => "link-#{sugar_el.object_id}" })
+      
+      x1 = -1*(sugar_el.centre[:x] - 20)
+      y1 = -1*(sugar_el.centre[:y] - 20)
+      x2 = -1*(sugar_el.centre[:x] + 20)
+      y2 = -1*(sugar_el.centre[:y] + 20)
+      x3 = -1*(sugar_el.centre[:x] - 20)
+      y3 = -1*(sugar_el.centre[:y] + 20)
+      x4 = -1*(sugar_el.centre[:x] + 20)
+      y4 = -1*(sugar_el.centre[:y] - 20)
+      cross = Element.new('svg:line')
+      cross.add_attributes({'class' => 'bad_link', 'x1' => x1, 'x2' => x2, 'y1' => y1, 'y2' => y2, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
+      cross_inv = Element.new('svg:line')
+      cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
+
+      x1 = -1*(sugar_el.centre[:x] + 110)
+      y1 = -1*(sugar_el.centre[:y] - 10)
+
+      max_height = content.size * 30 + 25
+      
+      back_el = Element.new('svg:rect')
+      back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => max_height, 'stroke' => border_colour, 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
+      back_circle = Element.new('svg:svg')
+      
+      cross_mark_height = content.size == 0 ? 90 : 58
+      
+      back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(sugar_el.centre[:x]+45), 'y' => -1*(sugar_el.centre[:y]+45))
+      back_circle_shape = Element.new('svg:circle')
+      back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
+      back_circle.add_element(back_circle_shape)
+      text = Element.new('svg:text')
+      text.add_attributes({ 'x' => x1, 'y' => y1+10, 'width' => 210, 'font-size' => 30, 'height' => max_height })
+      content.each { |content_line|
+        li = Element.new('svg:tspan')
+        li.add_attributes({'x' => x1+20, 'dy' => 30 })
+        li.text = content_line
+        text.add_element(li)
+      }
+      bad_linkage.add_element(back_el) if genes.size > 0
+      bad_linkage.add_element(back_circle)        
+      bad_linkage.add_element(text) if genes.size > 0
+      bad_linkage.add_element(cross)
+      bad_linkage.add_element(cross_inv)
+      gene_overlay.add_element(bad_linkage)
+      
+      drop_shadow = Element.new('svg:g')
+      drop_shadow.add_attribute('filter','url(#drop-shadow)')
+      shadow = Element.new('svg:use')
+      shadow.add_attribute('xlink:href' , "#link-#{sugar_el.object_id}")
+      drop_shadow.add_element(shadow)
+      gene_overlay.add_element(drop_shadow)
+    }
+  end
+  
+  def callback_hide_element
+    CALLBACK_HIDE_ELEMENT
   end
   
   protected :render_sugar, :render_link, :render_residue

@@ -17,6 +17,7 @@ require 'Render/CondensedScalableLayout'
 require 'Render/GridLayout'
 require 'Render/SvgRenderer'
 require 'Render/HtmlTextRenderer'
+require 'Render/CollapsedStubs'
 
 Monosaccharide.Load_Definitions("data/dictionary.xml")
 NamespacedMonosaccharide.Default_Namespace = :ecdb
@@ -44,6 +45,7 @@ sugar.sequence = seq
 sugar.extend(Renderable::Sugar)
 
 renderer = SvgRenderer.new()
+renderer.extend(CollapsedStubs)
 renderer.sugar = sugar
 renderer.scheme = 'boston'
 renderer.initialise_prototypes()
@@ -54,6 +56,10 @@ sugar.root.children.select { |kid| kid[:residue].name(:ic) == 'Gal' && kid[:resi
     res.scale_by_factor(1.5)
   }
 }
+my_proto = renderer.prototype_for_residue(sugar.root)
+sugar.root.prototype = Document.new(my_proto.to_s).root
+new_proto = sugar.root.prototype
+
 
 #puts sugar.sequence_from_residue(the_gal[:residue])
 # 
@@ -65,6 +71,8 @@ my_layout = CondensedScalableLayout.new()
 my_layout.node_spacing = {:x => 100, :y => 100 }
 my_layout.layout(sugar)
 @result = renderer.render(sugar)
+
+
 
 puts @result
 0.times do 
