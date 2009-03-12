@@ -36,7 +36,8 @@ sugar.extend(Sugar::IO::CondensedIupac::Writer)
 sugar.target_namespace = :ic
 sugar.extend(Sugar::MultiSugar)
 
-seq='Fuc(a1-2)[Gal(b1-4)GlcNAc(b1-6)][NeuAc(a2-3)][Gal(a1-3)][Fuc(a1-2)[Fuc(a1-3)[Gal(b1-4)]GlcNAc(b1-6)][Gal(a1-3)][GalNAc(a1-3)][Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)]Gal(b1-3)[Gal(b1-4)][Fuc(a1-4)]GlcNAc(b1-3)][GalNAc(a1-3)]Gal(b1-3)[Gal(b1-3)[Fuc(a1-4)][Fuc(a1-2)[GalNAc(a1-3)][Gal(a1-3)][Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)]Gal(b1-4)][Fuc(a1-3)]GlcNAc(b1-6)][NeuAc(a2-6)][Fuc(a1-2)[GalNAc(a1-3)]Gal(b1-3)GlcNAc(b1-3)][GalNAc(a1-3)]GalNAc'
+#seq='Fuc(a1-2)[GlcNAc(b1-6)[GlcNAc(b1-3)]Gal(b1-4)GlcNAc(b1-6)][NeuAc(a2-3)][Gal(a1-3)][Fuc(a1-2)[Fuc(a1-3)[Gal(b1-4)]GlcNAc(b1-6)][Gal(a1-3)][GalNAc(a1-3)][Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)]Gal(b1-3)[Gal(b1-4)][Fuc(a1-4)]GlcNAc(b1-3)][GalNAc(a1-3)]Gal(b1-3)[Gal(b1-3)[Fuc(a1-4)][Fuc(a1-2)[GalNAc(a1-3)][Gal(a1-3)][Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)]Gal(b1-4)][Fuc(a1-3)]GlcNAc(b1-6)][NeuAc(a2-6)][Fuc(a1-2)[GalNAc(a1-3)]Gal(b1-3)GlcNAc(b1-3)][GalNAc(a1-3)]GalNAc'
+seq='Gal(b1-3)GalNAc'
 #seq = 'Fuc(a1-2)[GlcNAc(b1-6)][NeuAc(a2-3)][Gal(b1-3)[GlcNAc(b1-3)[GlcNAc(b1-6)]Gal(b1-4)]GlcNAc(b1-3)][Gal(a1-3)]Gal(b1-3)GalNAc'
 #sugar.sequence="Fuc(a1-4)[GlcNAc(b1-3)][Gal(b1-3)GlcNAc(b1-6)]Gal(b1-4)GlcNAc(b1-2)[Fuc(a1-4)[GlcNAc(b1-3)][Gal(b1-3)GlcNAc(b1-6)]Gal(b1-4)GlcNAc(b1-4)]Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)[Fuc(a1-3)]GlcNAc"
 #sugar.sequence="Fuc(a1-2)[NeuAc(a2-6)][GlcNAc(b1-3)Gal(b1-3)]GalNAc"
@@ -59,6 +60,24 @@ sugar.root.children.select { |kid| kid[:residue].name(:ic) == 'Gal' && kid[:resi
 my_proto = renderer.prototype_for_residue(sugar.root)
 sugar.root.prototype = Document.new(my_proto.to_s).root
 new_proto = sugar.root.prototype
+
+all_gals = sugar.residue_composition.select { |r| r.name(:ic) == 'Gal' && r.parent && r.parent.name(:ic) == 'GlcNAc' }
+type_i = all_gals.select { |r| r.paired_residue_position == 3 }
+type_ii = all_gals.select { |r| r.paired_residue_position == 4 }
+all_glcnacs = sugar.leaves.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' }
+type_ii_glcnac = (all_glcnacs.select { |r| r.parent.paired_residue_position == 4 }) + (type_ii.collect { |r| r.parent }.select { |r| r.paired_residue_position != 6 && r.parent.name(:ic) == 'Gal' })
+type_i_glcnac = (all_glcnacs.select { |r| r.parent.paired_residue_position == 3 }) + (type_i.collect { |r| r.parent }.select { |r| r.paired_residue_position != 6 })
+branching = sugar.residue_composition.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' && r.paired_residue_position == 6 }
+
+sugar.callbacks << lambda { |sug_root,renderer|
+  renderer.chain_background_width = 20
+  renderer.chain_background_padding = 65
+#  renderer.render_valid_decorations(sugar,valid_residues.uniq)
+#  renderer.render_invalid_decorations(sugar,invalid_residues.uniq)
+  renderer.render_simplified_chains(sugar,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#ff0000')
+  renderer.render_simplified_chains(sugar,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#00ff00')
+  renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching','#0000ff')
+}
 
 
 #puts sugar.sequence_from_residue(the_gal[:residue])

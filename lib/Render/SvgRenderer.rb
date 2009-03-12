@@ -454,7 +454,7 @@ class SvgRenderer
     
   end  
 
-  def render_simplified_chains(sugar,chains,chain_class)
+  def render_simplified_chains(sugar,chains,chain_class,colour=nil)
     chains_container = Element.new('svg:g')
     sugar.underlays << chains_container
     chains_container.add_attribute('class',chain_class)
@@ -462,7 +462,7 @@ class SvgRenderer
     chains.each { |chain|
       chain_container = Element.new('svg:g')
       chain.reverse.each { |chain_el|
-        render_simple_chain_residue(chain_container,chain_el)
+        render_simple_chain_residue(chain_container,chain_el,colour)
       }
       chains_container.add_element(chain_container)
     }
@@ -498,25 +498,25 @@ class SvgRenderer
     linkage.callbacks.push( callback_make_linkage_background(container_el,residue.linkage_at_position,chain_background_width,colour,colour) )
   end
 
-  def render_chain_residue(container_el,residue)
-    render_chain_residue_node(container_el,residue)
-    render_chain_linkage(container_el,residue.linkage_at_position)
+  def render_chain_residue(container_el,residue,colour=nil)
+    render_chain_residue_node(container_el,residue,colour)
+    render_chain_linkage(container_el,residue.linkage_at_position,colour)
   end
   
-  def render_simple_chain_residue(container_el,residue)
-    render_chain_residue(container_el,residue)
+  def render_simple_chain_residue(container_el,residue,colour=nil)
+    render_chain_residue(container_el,residue,colour)
     residue.linkage_at_position.label_callbacks.push(callback_hide_element)
     residue.linkage_at_position.callbacks.push(callback_hide_element)
   end
   
-  def render_chain_residue_node(container_el,residue)
+  def render_chain_residue_node(container_el,residue,colour='#ddffdd')
     return unless residue
-    residue.callbacks.push( callback_make_residue_background(container_el,residue,chain_background_width+chain_background_padding,'#ddffdd','#ddffdd') )
+    residue.callbacks.push( callback_make_residue_background(container_el,residue,chain_background_width+chain_background_padding,colour,colour) )
   end
   
-  def render_chain_linkage(container_el,linkage)
+  def render_chain_linkage(container_el,linkage,colour='#ddffdd')
     return unless linkage
-    linkage.callbacks.push( callback_make_linkage_background(container_el,linkage,chain_background_width,'#ddffdd','#ddffdd') )    
+    linkage.callbacks.push( callback_make_linkage_background(container_el,linkage,chain_background_width,colour,colour) )    
   end
   
   def callback_make_linkage_background(container_element,linkage,linkage_padding,fill_colour,stroke_colour)
