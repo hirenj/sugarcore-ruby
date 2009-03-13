@@ -199,6 +199,23 @@ class Sugar
       return parents.values || []
     end
     
+    def branch_points
+      # Get all GlcNAcs. Add 1 to the branch count if it is a glcnac on a 2/4/6 with a sibling. Add 1 to branch count if no ancestor glcnacs on 3 or 6
+      glcnacs = self.residue_composition.select { |r|
+        r.name(:ic) == 'GlcNAc' && (r.paired_residue_position || 0) > 0
+      }
+      glcnacs.reject! { |r|
+        r == @root ||
+        (r.parent == @root && r.parent.name(:ic) == 'GlcNAc')
+      }
+      glcnacs.select { |r|
+        ([2,4,6].include?(r.paired_residue_position) &&
+        (r.siblings.select { |r| r.name(:ic) == 'GlcNAc' && r.paired_residue_position > 0 }.size > 0)) ||
+        (! r.parent) || ( r.parent.name(:ic) != 'Gal' && r.anomer != 'b') || ( ! r.parent.parent ) ||
+        (r.parent.parent.name(:ic) != 'GlcNAc')
+      }
+    end
+    
     # The path to the root residue from the specified residue
   	def get_path_to_root(start_residue=@root)
       node_to_root_traversal(start_residue)
