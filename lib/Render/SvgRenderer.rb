@@ -519,6 +519,45 @@ class SvgRenderer
     linkage.callbacks.push( callback_make_linkage_background(container_el,linkage,chain_background_width,colour,colour) )    
   end
   
+  def render_text_residue_label(sugar,residue,label)
+    container = Element.new('svg:g')
+    container.add_attribute('class','branch_point_label')
+    sugar.overlays << container
+    residue.callbacks.push( callback_make_object_badge(container,residue,label,0.5,:top_right,'#9999ff'))
+  end
+  
+  def callback_make_object_badge(container_element,sugar_object,label,node_ratio,corner,stroke_colour)
+    lambda { |element|
+    cx = sugar_object.position[:x1]
+    cy = sugar_object.position[:y2]
+    case corner
+    when :top_left
+      cx = sugar_object.position[:x2]
+      cy = sugar_object.position[:y2]
+    when :bottom_left
+      cx = sugar_object.position[:x2]
+      cy = sugar_object.position[:y1]
+    when :bottom_right
+      cx = sugar_object.position[:x1]
+      cy = sugar_object.position[:y1]      
+    end
+    badge = Element.new('svg:g')
+
+    badge_width = node_ratio * sugar_object.dimensions[:width].to_f
+    
+    back_circle_shape = Element.new('svg:circle')
+    back_circle_shape.add_attributes({'cx' => -1*cx, 'cy' => -1*cy, 'r' =>  badge_width / 2, 'stroke' => stroke_colour, 'stroke-width' => '5', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 1 })
+    badge.add_element(back_circle_shape)
+    
+    text = Element.new('svg:text')
+    text.add_attributes({ 'x' => -1*(cx), 'y' => -1*(cy), 'text-anchor' => 'middle', 'dominant-baseline' => 'middle', 'width' => badge_width, 'font-size' => badge_width - 15, 'height' => badge_width - 15 })
+    text.text = label
+    badge.add_element(text)
+    
+    container_element.add_element(badge)    
+    }
+  end
+  
   def callback_make_linkage_background(container_element,linkage,linkage_padding,fill_colour,stroke_colour)
     Proc.new { |element|
       x1 = -1*linkage.first_residue.centre[:x]
@@ -554,11 +593,11 @@ class SvgRenderer
     }
   end
   
-  def callback_make_element_label(sugar_el,content,border_colour)
+  def callback_make_element_label(container_element,sugar_el,content,border_colour)
     lambda { |element|
 
       bad_linkage = Element.new('svg:g')
-      bad_linkage.add_attributes({'id' => "link-#{sugar_el.object_id}" })
+      bad_linkage.add_attributes({'id' => "label-#{sugar_el.object_id}" })
       
       x1 = -1*(sugar_el.centre[:x] - 20)
       y1 = -1*(sugar_el.centre[:y] - 20)
@@ -586,7 +625,7 @@ class SvgRenderer
       
       back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(sugar_el.centre[:x]+45), 'y' => -1*(sugar_el.centre[:y]+45))
       back_circle_shape = Element.new('svg:circle')
-      back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
+      back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => border_colour, 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
       back_circle.add_element(back_circle_shape)
       text = Element.new('svg:text')
       text.add_attributes({ 'x' => x1, 'y' => y1+10, 'width' => 210, 'font-size' => 30, 'height' => max_height })
@@ -596,19 +635,19 @@ class SvgRenderer
         li.text = content_line
         text.add_element(li)
       }
-      bad_linkage.add_element(back_el) if genes.size > 0
+      bad_linkage.add_element(back_el) if content.size > 0
       bad_linkage.add_element(back_circle)        
-      bad_linkage.add_element(text) if genes.size > 0
+      bad_linkage.add_element(text) if content.size > 0
       bad_linkage.add_element(cross)
       bad_linkage.add_element(cross_inv)
-      gene_overlay.add_element(bad_linkage)
+      container_element.add_element(bad_linkage)
       
       drop_shadow = Element.new('svg:g')
       drop_shadow.add_attribute('filter','url(#drop-shadow)')
       shadow = Element.new('svg:use')
-      shadow.add_attribute('xlink:href' , "#link-#{sugar_el.object_id}")
+      shadow.add_attribute('xlink:href' , "#label-#{sugar_el.object_id}")
       drop_shadow.add_element(shadow)
-      gene_overlay.add_element(drop_shadow)
+      container_element.add_element(drop_shadow)
     }
   end
   
