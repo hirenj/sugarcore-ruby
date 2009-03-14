@@ -343,6 +343,15 @@ __FOO__
     assert_equal('Gal(a1-3)[GlcNAc(b1-4)Fuc(b1-6)][GlcNAc(b1-4)Gal(b1-3)]GlcNAc', sugar.sequence)
   end
 
+  def test_multisugar_find
+    sugar = build_multi_sugar_from_string("Gal(a1-3)GlcNAc")
+    sugar2 = build_multi_sugar_from_string("GlcNAc(b1-4)Fuc(b1-6)GlcNAc")
+    a_path = sugar.get_unambiguous_path_to_root(sugar.leaves[0]).reverse
+    sugar2.union!(sugar)
+    a_res = sugar2.find_residue_by_unambiguous_path(a_path)
+    assert_equal('Gal',a_res.name(:ic))
+  end
+
   def test_sugar_union_subtract
     sugar = build_multi_sugar_from_string("Gal(a1-3)GlcNAc")
     sugar2 = build_sugar_from_string("GlcNAc(b1-4)Fuc(b1-6)GlcNAc")
