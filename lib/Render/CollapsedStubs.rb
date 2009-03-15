@@ -130,17 +130,6 @@ module CollapsedStubs
   end  
     
   def callback_make_halo(parent_element,rendered_object,colour,inner_radius,radius,start_angle,arc_angle)
-    counter = 1
-    
-  	last_x = 50;
-  	last_y = 0;
-  	last_x2 = 50;
-  	last_y2 = 49;
-
-		xpos = 50 + 50 * Math.cos(Math::PI*(2*counter / 4 + 0.5));
-		ypos = 50 - 50 * Math.sin(Math::PI*(2*counter / 4 + 0.5));
-		xpos2 = 50 + 1 * Math.cos(Math::PI*(2*counter / 4 + 0.5));
-		ypos2 = 50 - 1 * Math.sin(Math::PI*(2*counter / 4 + 0.5));
 
     Proc.new { |element|
       cx = -1*rendered_object.centre[:x]

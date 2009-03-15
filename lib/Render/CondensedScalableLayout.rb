@@ -42,6 +42,8 @@ class CondensedScalableLayout < CondensedLayout
     lacnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GalNAc' && r.parent && r.parent.name(:ic) == 'GlcNAc'}
     lacnacs.each { |lacnac|
       lacnac.scale_by_factor(0.5)
+      lacnac.position[:x2] = lacnac.position[:x1] + lacnac.dimensions[:width]
+      lacnac.position[:y2] = lacnac.position[:y1] + lacnac.dimensions[:height]
     }
   end
 
