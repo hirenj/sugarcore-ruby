@@ -539,11 +539,14 @@ class SvgRenderer
       cy = sugar_object.position[:y1]
     when :bottom_right
       cx = sugar_object.position[:x1]
-      cy = sugar_object.position[:y1]      
+      cy = sugar_object.position[:y1]
+    when :center
+      cx = sugar_object.centre[:x]
+      cy = sugar_object.centre[:y]
     end
     badge = Element.new('svg:g')
 
-    badge_width = node_ratio * sugar_object.dimensions[:width].to_f
+    badge_width = node_ratio * sugar_object.width.to_f
     
     back_circle_shape = Element.new('svg:circle')
     back_circle_shape.add_attributes({'cx' => -1*cx, 'cy' => -1*cy, 'r' =>  badge_width / 2, 'stroke' => stroke_colour, 'stroke-width' => '5', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 1 })

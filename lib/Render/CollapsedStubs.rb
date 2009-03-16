@@ -90,13 +90,13 @@ module CollapsedStubs
       start_angle = 0
       arc_angle = Math::PI / 3
       if fuc.paired_residue_position == 3
-        start_angle = -1*Math::PI/6
+        start_angle = Math::PI*5/6
       end
       if fuc.paired_residue_position == 4
-        start_angle = Math::PI*5/6  
+        start_angle = -1*Math::PI/6  
       end
       if fuc.paired_residue_position == 6
-        start_angle = Math::PI*5/6  
+        start_angle = -1*Math::PI/6  
       end
       if fuc.paired_residue_position == 2
         start_angle = Math::PI*0.25
@@ -120,10 +120,10 @@ module CollapsedStubs
       start_angle = 0
       arc_angle = Math::PI / 3
       if neuac.paired_residue_position == 3
-        start_angle = -1*Math::PI/6
+        start_angle = Math::PI*5/6
       end
       if neuac.paired_residue_position == 6
-        start_angle = Math::PI*5/6  
+        start_angle = -1*Math::PI/6  
       end
       neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,colour,1,hits,start_angle,arc_angle))
     }

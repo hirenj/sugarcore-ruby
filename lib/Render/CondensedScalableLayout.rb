@@ -27,6 +27,19 @@ class CondensedScalableLayout < CondensedLayout
     do_sibling_bunching(sugar)
     do_center_boxes_more(sugar)
     do_sibling_bunching(sugar)
+    do_multi_residue_widening(sugar)
+  end
+
+  def do_multi_residue_widening(sugar)
+    sugar.breadth_first_traversal { |res| 
+      res_kids = res.children.reject { |r| r[:residue].is_stub? }
+      if res_kids.size > 4
+        multiplier = (res_kids.size - 4)
+        res_kids.each { |child|
+          child[:residue].translate(multiplier * DEFAULT_NODE_SPACING[:x],0)
+        }
+      end
+    }    
   end
 
   def setup_scaling(sugar)    
