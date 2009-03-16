@@ -146,7 +146,8 @@ module Renderable::Residue
       if block_given?
         next unless block.call(child[:residue])
       end
-      link_box = child[:link].get_paired_residue(self).box
+
+      link_box = child[:link].get_paired_residue(self).box(&block)
 
       if min_x == nil || link_box[:x1] < min_x
         min_x = link_box[:x1]
@@ -188,6 +189,7 @@ module Renderable::Residue
       if block_given?
         next unless block.call(child[:residue])
       end
+      debug("Accepting child #{child[:residue].name(:ic)}#{child[:residue].anomer}")
       link_box = child[:link].get_paired_residue(self).box(&block)
 
       if min_x == nil || link_box[:x1] < min_x

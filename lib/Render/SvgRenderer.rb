@@ -505,8 +505,10 @@ class SvgRenderer
   
   def render_simple_chain_residue(container_el,residue,colour=nil)
     render_chain_residue(container_el,residue,colour)
-    residue.linkage_at_position.label_callbacks.push(callback_hide_element)
-    residue.linkage_at_position.callbacks.push(callback_hide_element)
+    if residue.linkage_at_position
+      residue.linkage_at_position.label_callbacks.push(callback_hide_element)
+      residue.linkage_at_position.callbacks.push(callback_hide_element)
+    end
   end
   
   def render_chain_residue_node(container_el,residue,colour='#ddffdd')

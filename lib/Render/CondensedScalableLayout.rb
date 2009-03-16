@@ -100,8 +100,8 @@ class CondensedScalableLayout < CondensedLayout
     
     center_residues = siblings.select { |r| r.position[:y1] == center_y }
     
-    positive_minimum = (center_residues.collect { |r| r.box[:y2] }).max || center_y
-    negative_minimum = (center_residues.collect { |r| r.box[:y1] }).min || center_y
+    positive_minimum = (center_residues.collect { |r| r.box[:y2] }).max || (center_y + node_spacing[:y])
+    negative_minimum = (center_residues.collect { |r| r.box[:y1] }).min || (center_y + node_spacing[:y])
     
     negative_siblings = siblings.select { |r| r.position[:y1] < center_y }
     
@@ -116,7 +116,7 @@ class CondensedScalableLayout < CondensedLayout
     delta = first_up_bottom - first_down_top - node_spacing[:y]
     
     if delta > 0
-      first_up.move_box(first_up.position[:x1], positive_minimum ) if first_up
+      first_up.move_box(first_up.position[:x1], positive_minimum + node_spacing[:y] ) if first_up
       first_down.move_box(first_down.position[:x1], negative_minimum - node_spacing[:y] - first_down.box.height) if first_down
     end
     
@@ -319,25 +319,37 @@ class CondensedScalableLayout < CondensedLayout
             min_height = [res_height,sib_height].min
             debug("Minimum height is res #{res_height}, sib #{sib_height}")
             debug("Sibling currently at depth #{sugar.depth(sibling)} test res at #{sugar.depth(res)}")
-            debug(sugar.sequence_from_residue(sibling)+sibling.anomer+sibling.paired_residue_position.to_s)
-            debug(sugar.sequence_from_residue(res)+res.anomer+res.paired_residue_position.to_s)
+            a_seq = sugar.sequence_from_residue(sibling)+sibling.anomer+sibling.paired_residue_position.to_s
+            other_seq = sugar.sequence_from_residue(res)+res.anomer+res.paired_residue_position.to_s
+            debug(a_seq)
+            debug(other_seq)
 
             res_box = res.children_box { |r|
               ! r.is_stub? &&
               sugar.depth(r) <= min_height &&
-              ! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)
+              (! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)) &&
+              (! (['NeuAc','Fuc'].include?(r.name(:ic))))
             }
 
             sib_box = sibling.children_box { |r|
               ! r.is_stub? &&
               sugar.depth(r) <= min_height &&
-              ! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)
+              (! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)) &&
+              (! (['NeuAc','Fuc'].include?(r.name(:ic))))
             }
             next unless sib_box && res_box
             if (inter_box = calculate_intersection(sib_box, res_box)) != nil
-              debug("Spreading siblings")
-              spread_siblings(res.parent, inter_box.height)
+              debug("Res box is #{res_box}")
+              debug("Sibling box is #{sib_box}")
+              debug("Spreading siblings, parent #{res.name(:ic)} and sibling #{sibling.name(:ic)} total intersection is h: #{inter_box.height} by w: #{inter_box.width}")
+              padding = 0
+              if inter_box.height == 0 && inter_box.width > 0
+                padding = node_spacing[:y]
+              end
+              spread_siblings(res.parent, inter_box.height+padding)
               res_box = res.box
+            else
+              debug("Not spreading siblings")
             end
           }
         end
@@ -349,14 +361,17 @@ class CondensedScalableLayout < CondensedLayout
     return if (delta == 0)
     kids = node.children.reject { |r| r[:residue].is_stub? }.collect { |child| child[:residue] }
     above_kids = 1
-    below_kids = node.children.collect { |child| child[:residue] }.delete_if { |res|
-      res.position[:y1] < 0
-    }.length
+    below_kids = kids.reject { |res|
+      res.position[:y1] >= node.position[:y1]
+    }.size
+    
+    debug("Kids total is #{kids.size}, below is #{below_kids}")
+    
     kids.each { |kid|
-      if (kid.position[:y1] < 0)
+      if (kid.position[:y1] < node.position[:y1])
         kid.translate(0,-1 * below_kids * delta)
         below_kids = below_kids - 1
-      elsif (kid.position[:y1] > 0)
+      elsif (kid.position[:y1] > node.position[:y1])
         kid.translate(0,delta * above_kids )
         above_kids = above_kids + 1
       end

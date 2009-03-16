@@ -39,13 +39,16 @@ sugar.extend(Sugar::MultiSugar)
 #seq='Fuc(a1-2)[GlcNAc(b1-6)[GlcNAc(b1-3)]Gal(b1-4)GlcNAc(b1-6)][NeuAc(a2-3)][Gal(a1-3)][Fuc(a1-2)[Fuc(a1-3)[Gal(b1-4)]GlcNAc(b1-6)][Gal(a1-3)][GalNAc(a1-3)][Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)]Gal(b1-3)[Gal(b1-4)][Fuc(a1-4)]GlcNAc(b1-3)][GalNAc(a1-3)]Gal(b1-3)[Gal(b1-3)[Fuc(a1-4)][Fuc(a1-2)[GalNAc(a1-3)][Gal(a1-3)][Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)]Gal(b1-4)][Fuc(a1-3)]GlcNAc(b1-6)][NeuAc(a2-6)][Fuc(a1-2)[GalNAc(a1-3)]Gal(b1-3)GlcNAc(b1-3)][GalNAc(a1-3)]GalNAc'
 #seq='Gal(b1-3)GalNAc'
 #seq = 'Fuc(a1-2)[GlcNAc(b1-6)][NeuAc(a2-3)][Gal(b1-3)[GlcNAc(b1-3)[GlcNAc(b1-6)]Gal(b1-4)]GlcNAc(b1-3)][Gal(a1-3)]Gal(b1-3)GalNAc'
-seq="Fuc(a1-4)[GlcNAc(b1-3)][Gal(b1-3)GlcNAc(b1-6)]Gal(b1-4)GlcNAc(b1-2)[Fuc(a1-4)[GlcNAc(b1-3)][Gal(b1-3)GlcNAc(b1-6)]Gal(b1-4)GlcNAc(b1-4)]Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)[Fuc(a1-3)]GlcNAc"
+#seq="Fuc(a1-4)[GlcNAc(b1-3)][Gal(b1-3)GlcNAc(b1-6)]Gal(b1-4)GlcNAc(b1-2)[Fuc(a1-4)[GlcNAc(b1-3)][Gal(b1-3)GlcNAc(b1-6)]Gal(b1-4)GlcNAc(b1-4)]Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)[Fuc(a1-3)]GlcNAc"
 #sugar.sequence="Fuc(a1-2)[NeuAc(a2-6)][GlcNAc(b1-3)Gal(b1-3)]GalNAc"
+#seq='Gal(b1-3)[GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-2)[Gal(b1-3)[Gal(b1-4)]GlcNAc(b1-4)]Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)GlcNAc'
+#seq='NeuAc(a2-6)[GalNAc(a1-3)]Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)[Fuc(a1-3)[Fuc(a1-2)[NeuAc(a2-3)][Gal(a1-3)]Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-6)]Gal(b1-3)[Fuc(a1-6)]GlcNAc'
+seq='NeuAc(a2-6)Gal(b1-4)GlcNAc(b1-2)[NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-4)]Man(a1-3)[NeuAc(a2-6)Gal(b1-4)GlcNAc(b1-2)[NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-6)]Man(a1-6)]Man(b1-4)GlcNAc(b1-4)GlcNAc'
 sugar.sequence = seq
 
 Logger.new(STDERR).info(sugar.branch_points.size)
 
-exit
+#exit
 
 sugar.extend(Renderable::Sugar)
 
@@ -55,12 +58,6 @@ renderer.sugar = sugar
 renderer.scheme = 'boston'
 renderer.initialise_prototypes()
 
-sugar.root.children.select { |kid| kid[:residue].name(:ic) == 'Gal' && kid[:residue].anomer = 'b' }.each { |kid|
-  chains = sugar.get_chains_from_residue(kid[:residue])
-  chains.flatten.uniq.each { |res|
-    res.scale_by_factor(1.5)
-  }
-}
 my_proto = renderer.prototype_for_residue(sugar.root)
 sugar.root.prototype = Document.new(my_proto.to_s).root
 new_proto = sugar.root.prototype
