@@ -11,6 +11,7 @@ module CollapsedStubs
   def setup_stubs(sugar)
     setup_hit_desaturation(sugar)
     setup_fucosylation(sugar)
+    setup_sulfation(sugar)
     setup_sialylation(sugar)
     setup_abo_epitopes(sugar)
   end
@@ -128,6 +129,29 @@ module CollapsedStubs
       neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,colour,1,hits,start_angle,arc_angle))
     }
   end  
+
+  def setup_sulfation(sugar)
+    halo_element = Element.new('svg:g')
+    sugar.overlays << halo_element
+    neuacs = sugar.residue_composition.select { |r| r.name(:ic) == 'HSO3' }
+    neuacs.each { |neuac|
+      neuac.callbacks.push(callback_hide_element)
+      neuac.linkage_at_position.callbacks.push(callback_hide_element)
+      neuac.linkage_at_position.label_callbacks.push(callback_hide_element)
+      colour = neuac.prototype.root.attribute('fill').value || '#0000ff'
+      hits = neuac.respond_to?(:hits) ? 0.3+((neuac.hits.to_f / neuac.parent.hits.to_f)*0.6) : 0.5
+      start_angle = 0
+      arc_angle = Math::PI / 3
+      if neuac.paired_residue_position == 3
+        start_angle = Math::PI*5/6
+      end
+      if neuac.paired_residue_position == 6
+        start_angle = -1*Math::PI/6  
+      end
+      neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,colour,1,hits,start_angle,arc_angle))
+    }
+  end  
+
     
   def callback_make_halo(parent_element,rendered_object,colour,inner_radius,radius,start_angle,arc_angle)
 

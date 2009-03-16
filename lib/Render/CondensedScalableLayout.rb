@@ -142,7 +142,7 @@ class CondensedScalableLayout < CondensedLayout
     stub_residues = sugar.residue_composition.select { |res|
       ! seen_residues.include?(res) &&
       [2,3,4,6].include?(res.paired_residue_position) &&
-      ( ["Fuc","NeuAc", "NeuGc"].include?(res.name(:ic)) ||
+      ( ["Fuc","NeuAc", "NeuGc","HSO3"].include?(res.name(:ic)) ||
       (["Gal","GalNAc"].include?(res.name(:ic)) && res.anomer == 'a') ||
       (["GalNAc"].include?(res.name(:ic)) && res.anomer == 'b' && res.paired_residue_position == 4)
       ) &&
@@ -328,14 +328,14 @@ class CondensedScalableLayout < CondensedLayout
               ! r.is_stub? &&
               sugar.depth(r) <= min_height &&
               (! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)) &&
-              (! (['NeuAc','Fuc'].include?(r.name(:ic))))
+              (! (['NeuAc','Fuc','HSO3'].include?(r.name(:ic))))
             }
 
             sib_box = sibling.children_box { |r|
               ! r.is_stub? &&
               sugar.depth(r) <= min_height &&
               (! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)) &&
-              (! (['NeuAc','Fuc'].include?(r.name(:ic))))
+              (! (['NeuAc','Fuc','HSO3'].include?(r.name(:ic))))
             }
             next unless sib_box && res_box
             if (inter_box = calculate_intersection(sib_box, res_box)) != nil
