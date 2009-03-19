@@ -23,7 +23,7 @@ module CollapsedStubs
       res.prototype = Document.new(default_proto.to_s).root
       res_saturation = res.respond_to?(:hits) ? res.hits.to_f : 1.0
       res_saturation /= max_hits
-      saturation_min = ['NeuAc','Fuc'].include? (res.name(:ic)) ? 0.8 : 0.3
+      saturation_min = ['NeuAc','Fuc'].include?(res.name(:ic)) ? 0.8 : 0.3
       res_saturation *= (1 - saturation_min)
       res_saturation += saturation_min
       a_fill = nil
