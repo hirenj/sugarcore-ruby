@@ -14,6 +14,8 @@ module CollapsedStubs
     setup_sulfation(sugar)
     setup_sialylation(sugar)
     setup_abo_epitopes(sugar)
+    setup_sda_epitopes(sugar)
+#    setup_lacnacs(sugar)
   end
 
   def setup_hit_desaturation(sugar)
@@ -30,7 +32,9 @@ module CollapsedStubs
       res.prototype.root.each { |proto_el|
         next unless proto_el.is_a?(REXML::Element)
         convert_fill(proto_el)
-        hsl = Color::RGB.from_html(proto_el.attribute('fill').value).to_hsl
+        curr_fill = proto_el.attribute('fill')
+        next unless curr_fill
+        hsl = Color::RGB.from_html(curr_fill.value).to_hsl
         hsl.s = res_saturation
         brightness = hsl.l
         brightness += (1 - brightness)*(1-res_saturation)
@@ -42,11 +46,47 @@ module CollapsedStubs
     }
   end
 
+  def setup_lacnacs(sugar)
+    lacnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GalNAc' && r.parent && r.parent.name(:ic) == 'GlcNAc'}
+    lacnacs.each { |lacnac|
+      lacnac.linkage_at_position.callbacks.push(callback_hide_element)
+      lacnac.linkage_at_position.label_callbacks.push(callback_hide_element)      
+    }
+  end
+
   def convert_fill(element)
     style_dec = element.attribute('style').value
     element.add_attribute('style',style_dec.gsub(/fill\s*:\s*#(......)\s*;*/,''))
     new_fill = $1
     element.add_attribute('fill',new_fill) if new_fill
+  end
+
+  def setup_sda_epitopes(sugar)
+    sda_overlay = Element.new('svg:g')
+    sugar.overlays << sda_overlay
+    sugar.residue_composition.select { |r| ['GalNAc'].include?(r.name(:ic)) && r.anomer == 'b' && r.paired_residue_position == 4 && r.parent.name(:ic) == 'Gal' }.each { |r|
+      gal_parent = r.parent
+      r.callbacks.push(callback_hide_element)
+      r.linkage_at_position.callbacks.push(callback_hide_element)
+      r.linkage_at_position.label_callbacks.push(callback_hide_element)
+      gal_parent.callbacks.push(
+        lambda { |element|
+          cx = -1*gal_parent.centre[:x] + 10
+          cy = -1*gal_parent.centre[:y] + 10
+          text = Element.new('svg:text')
+          text.text = 'Sdα'
+          text.add_attributes({ 'x' => cx, 
+                                          'y' => cy, 
+                                          'font-size'=>"20",
+                                          'font-family' => 'Helvetica,Arial,Sans',
+                                          'text-anchor' => 'middle',
+                                          'textLength' => ((gal_parent.width / 2)-10),
+                                          'style'=>'fill:#000000;stroke:#000000;stroke-width:0pt;'
+                                          })
+          sda_overlay.add_element(text)
+        }
+      )
+    }
   end
 
   def setup_abo_epitopes(sugar)
