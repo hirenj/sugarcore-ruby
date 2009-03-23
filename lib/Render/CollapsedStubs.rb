@@ -119,7 +119,7 @@ module CollapsedStubs
       fuc.linkage_at_position.callbacks.push(callback_hide_element)
       fuc.linkage_at_position.label_callbacks.push(callback_hide_element)
       colour = fuc.prototype.root.attribute('fill').value || '#ff0000'
-      hits = fuc.respond_to?(:hits) ? 0.3+((fuc.hits.to_f / fuc.parent.hits.to_f)*0.6) : 0.5
+      hits = fuc.respond_to?(:hits) ? 0.1+((fuc.hits.to_f / fuc.parent.hits.to_f)*0.9) : 0.5
       start_angle = 0
       arc_angle = Math::PI / 3
       if fuc.paired_residue_position == 2
