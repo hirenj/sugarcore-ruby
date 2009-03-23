@@ -19,10 +19,8 @@ class CondensedScalableLayout < CondensedLayout
     remove_layout(sugar)
     do_initial_layout(sugar)
     setup_scaling(sugar)
-#    setup_lacnacs(sugar)
     seen_residues = do_chain_layout(sugar)
     seen_residues += do_stubs(sugar,seen_residues)
-#    do_lacnac_stubs(sugar)
     do_basic_layout(sugar,seen_residues)
     do_box_layout(sugar)
     do_sibling_bunching(sugar)
@@ -49,15 +47,6 @@ class CondensedScalableLayout < CondensedLayout
       res.scale_by_factor(Math.log(Math.log(res.method(self.scaling_symbol).call)+10))
       res.position[:x2] = res.position[:x1] + res.dimensions[:width]
       res.position[:y2] = res.position[:y1] + res.dimensions[:height]
-    }
-  end
-
-  def setup_lacnacs(sugar)
-    lacnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GalNAc' && r.parent && r.parent.name(:ic) == 'GlcNAc'}
-    lacnacs.each { |lacnac|
-      lacnac.scale_by_factor(0.5)
-      lacnac.position[:x2] = lacnac.position[:x1] + lacnac.dimensions[:width]
-      lacnac.position[:y2] = lacnac.position[:y1] + lacnac.dimensions[:height]
     }
   end
 
@@ -148,13 +137,6 @@ class CondensedScalableLayout < CondensedLayout
       current = negative_siblings.shift
     end
 
-  end
-
-  def do_lacnac_stubs(sugar)
-    lacnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GalNAc' && r.parent && r.parent.name(:ic) == 'GlcNAc'}
-    lacnacs.each { |lacnac|
-      lacnac.move_absolute(lacnac.parent.centre[:x],lacnac.parent.position[:y2])
-    }    
   end
 
   def needs_layout?(residue)
@@ -257,14 +239,13 @@ class CondensedScalableLayout < CondensedLayout
       debug("Shifting a kid across #{delta_x}")
       
       if kids_to_layout.size == 1 && (min_y == nil)
-#        delta_x = 0 if kids_to_layout[0][:residue].is_chain_start?
         kids_to_layout[0][:residue].translate(delta_x,0)
         next
       end
 
       if min_y == nil
         min_y = node_spacing[:y]
-        max_y = res.height
+        max_y = 0
       end
       
       new_chain_elements.each { |kid|
@@ -280,40 +261,22 @@ class CondensedScalableLayout < CondensedLayout
       
       everything_else = kids_to_layout.reject { |k| new_chain_elements.include?(k) }
       debug("Everything else to layout is #{everything_else.size}")
+      
+      if everything_else.size % 2 == 0
+        max_y += node_spacing[:y] + res.height
+      end
+      
       everything_else.each { |kid|
         if kid[:residue].paired_residue_position < 4
           min_y -= node_spacing[:y] + kid[:residue].height
           kid[:residue].translate(delta_x, min_y)
         else
-          max_y += node_spacing[:y] + kid[:residue].height
           kid[:residue].translate(delta_x, max_y)          
+          max_y += node_spacing[:y] + kid[:residue].height
         end
         debug("Min_y max_Y is #{min_y} #{max_y}")
       }
 
-      # debug("Total kids to lay out #{kids_to_layout.size}")
-      # debug("Starting y_offset is #{y_offset}")
-      # kids_to_layout.each { |child|
-      #   if child[:residue].is_chain_start?
-      #     debug("I am a chain start")
-      #     delta_x = 0
-      #     position = child[:residue].paired_residue_position
-      #     if position == 3 && child[:residue].name(:ic) == 'GlcNAc'
-      #       y_offset = 0
-      #     elsif position == 3
-      #       y_offset = -0.5 * node_spacing[:y]
-      #     else
-      #       y_offset = 0.5 * node_spacing[:y] + res.height
-      #     end
-      #   end
-      #   debug("Doing a standard layout for children of #{sugar.sequence_from_residue(res)}, shifting a kid #{delta_x},#{y_offset}")
-      #   child[:residue].translate(delta_x ,y_offset)
-      #   y_offset += node_spacing[:y] + child[:residue].height
-      #   if (y_offset > min_y) && (y_offset < max_y)
-      #     y_offset = max_y + node_spacing[:y]
-      #   end
-      #   debug("y_offset now is #{y_offset}")
-      # }
     }    
   end
 
