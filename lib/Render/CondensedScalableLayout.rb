@@ -19,9 +19,10 @@ class CondensedScalableLayout < CondensedLayout
     remove_layout(sugar)
     do_initial_layout(sugar)
     setup_scaling(sugar)
-    setup_lacnacs(sugar)
+#    setup_lacnacs(sugar)
     seen_residues = do_chain_layout(sugar)
     seen_residues += do_stubs(sugar,seen_residues)
+#    do_lacnac_stubs(sugar)
     do_basic_layout(sugar,seen_residues)
     do_box_layout(sugar)
     do_sibling_bunching(sugar)
@@ -88,64 +89,100 @@ class CondensedScalableLayout < CondensedLayout
     if ! siblings.is_a? Array
       siblings = [siblings]
     end
-    siblings = siblings.sort_by { |r| r.position[:y1].abs }.delete_if { |res| res.is_stub? }
-    
+
     return unless siblings[0] && siblings[0].parent
-    
+
     parent = siblings[0].parent
+
+    siblings = siblings.sort_by { |r| (parent.position[:y1] - r.position[:y1]).abs }.select { |res| needs_layout?(res) }
+        
+    box_block = lambda { |r|
+      needs_layout?(r)
+    }
     
     center_y = parent.position[:y1]
     
     positive_siblings = siblings.select { |r| r.position[:y1] > center_y }
+
+    negative_siblings = siblings.select { |r| r.position[:y1] < center_y }
     
     center_residues = siblings.select { |r| r.position[:y1] == center_y }
     
-    positive_minimum = (center_residues.collect { |r| r.box[:y2] }).max || (center_y + node_spacing[:y])
-    negative_minimum = (center_residues.collect { |r| r.box[:y1] }).min || (center_y + node_spacing[:y])
+    positive_minimum = (center_residues.collect { |r| (r.box &box_block)[:y2] }).max || (parent.position[:y1] + parent.height)
+    negative_minimum = (center_residues.collect { |r| (r.box &box_block)[:y1] }).min || (parent.position[:y1])
     
-    negative_siblings = siblings.select { |r| r.position[:y1] < center_y }
     
     first_down = negative_siblings[0]
     first_up = positive_siblings[0]
     
-    delta = 0
+    if first_up
+      delta = positive_minimum + node_spacing[:y] - first_up.box(&box_block)[:y1]
+      first_up.translate(0,delta)
+    end
     
-    first_down_top = first_down ? first_down.box[:y2] : positive_minimum
-    first_up_bottom = first_up ? first_up.box[:y1] : negative_minimum
-        
-    delta = first_up_bottom - first_down_top - node_spacing[:y]
-    
-    if delta > 0
-      first_up.move_box(first_up.position[:x1], positive_minimum + node_spacing[:y] ) if first_up
-      first_down.move_box(first_down.position[:x1], negative_minimum - node_spacing[:y] - first_down.box.height) if first_down
+    if first_down    
+      first_down_box = first_down.box &box_block
+      current_y1 = first_down_box[:y1]
+      new_y1 = negative_minimum - node_spacing[:y] - (first_down_box.height)
+      delta = new_y1 - current_y1
+      first_down.translate(0, delta)
     end
     
     current = positive_siblings.shift    
     while positive_siblings.size > 0
-      current_box = current.box
+      current_box = current.box &box_block
       next_sib = positive_siblings[0]
-      next_sib.move_box(next_sib.position[:x1],current_box[:y2] + node_spacing[:y])
+      delta = current_box[:y2] + node_spacing[:y] - (next_sib.box &box_block)[:y1]
+      next_sib.translate(0,delta)
       current = positive_siblings.shift
     end
+    
     current = negative_siblings.shift
     while negative_siblings.size > 0
-      current_box = current.box
+      current_box = current.box &box_block
       next_sib = negative_siblings[0]
-      next_sib_box = next_sib.box
-      next_sib.move_box(next_sib.position[:x1],current_box[:y1] - node_spacing[:y] - next_sib_box.height)
+      next_sib_box = next_sib.box &box_block
+      new_y1 = current_box[:y1] - node_spacing[:y] - next_sib_box.height
+      delta = new_y1 - next_sib_box[:y1]
+      next_sib.translate(0,delta)
       current = negative_siblings.shift
     end
 
+  end
+
+  def do_lacnac_stubs(sugar)
+    lacnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GalNAc' && r.parent && r.parent.name(:ic) == 'GlcNAc'}
+    lacnacs.each { |lacnac|
+      lacnac.move_absolute(lacnac.parent.centre[:x],lacnac.parent.position[:y2])
+    }    
+  end
+
+  def needs_layout?(residue)
+    if residue.respond_to?(:is_stub?) && residue.is_stub?
+      return false
+    end
+
+    if ['Gal','GalNAc'].include?(residue.name(:ic))
+      if residue.anomer == 'a' && residue.paired_residue_position == 3
+        return false
+      end
+      if residue.name(:ic) == 'GalNAc' && residue.anomer == 'b' && residue.paired_residue_position == 4 && residue.parent.name(:ic) == 'Gal'
+        return false
+      end
+    end
+    
+    if ['NeuAc','NeuGc','Fuc','HSO3'].include?(residue.name(:ic))
+      return false
+    end
+    
+    return true
   end
 
   def do_stubs(sugar,seen_residues)
     stub_residues = sugar.residue_composition.select { |res|
       ! seen_residues.include?(res) &&
       [2,3,4,6].include?(res.paired_residue_position) &&
-      ( ["Fuc","NeuAc", "NeuGc","HSO3"].include?(res.name(:ic)) ||
-      (["Gal","GalNAc"].include?(res.name(:ic)) && res.anomer == 'a') ||
-      (["GalNAc"].include?(res.name(:ic)) && res.anomer == 'b' && res.paired_residue_position == 4)
-      ) &&
+      ! needs_layout?(res) &&
       res.siblings.size > 0
     }
     stub_residues.each { |res|
@@ -178,39 +215,105 @@ class CondensedScalableLayout < CondensedLayout
     
     sugar.depth_first_traversal { |res| 
       kid_size = 0
-      kids_to_layout = res.children.reject { |kid| 
-        (kid[:residue].is_stub? && (kid_size += kid[:residue].dimensions[:height]) > 0) ||
-        (laid_out_residues.include?(kid[:residue]) && ! kid[:residue].is_chain_start?)
+      
+      debug("For residue #{sugar.sequence_from_residue(res)}")
+      
+      #accept if kid is a chain start
+      #accept if kid is not a stub
+      
+      # kids_to_layout = res.children.reject { |kid| 
+      #   (kid[:residue].is_stub? && (kid_size += kid[:residue].height) > 0) ||
+      #   (laid_out_residues.include?(kid[:residue]) && ! kid[:residue].is_chain_start?)
+      # }
+      kids_to_layout = res.children.select { |kid| 
+        ! kid[:residue].is_stub? &&
+        ( kid[:residue].is_chain_start? || ! laid_out_residues.include?(kid[:residue]) )
       }
-      if kids_to_layout.size <= 1
-        y_offset = 0
-      else
-        kid_size -= kids_to_layout[0][:residue].dimensions[:height]
-        y_offset = 0.5 * ( ( 1 - kids_to_layout.length ) * node_spacing[:y] + kid_size )
+      
+      debug("Kids needing layout"+kids_to_layout.collect { |k| sugar.sequence_from_residue(k[:residue]) }.join(','))
+      
+      total_kid_size = kids_to_layout.inject(0) { |sum,kid| sum += kid[:residue].height }
+      existing_chain_elements = res.children.select { |kid|
+        ! kid[:residue].is_stub? &&
+        ( laid_out_residues.include?(kid[:residue]) && ! kid[:residue].is_chain_start? )
+      }
+
+      debug("Existing chains"+existing_chain_elements.collect { |k| sugar.sequence_from_residue(k[:residue]) }.join(','))
+
+      max_y = existing_chain_elements.collect { |kid| kid[:residue].position[:y2] - res.position[:y1] }.max
+      min_y = existing_chain_elements.collect { |kid| kid[:residue].position[:y1] - res.position[:y1] }.min
+      
+      new_chain_elements = kids_to_layout.select { |kid|
+        laid_out_residues.include?(kid[:residue]) && kid[:residue].is_chain_start?        
+      }
+
+      debug("New chains"+new_chain_elements.collect { |k| sugar.sequence_from_residue(k[:residue])+k[:residue].paired_residue_position.to_s }.join(','))
+
+      
+      debug("Min_y max_Y is #{min_y} #{max_y}")
+
+      delta_x = node_spacing[:x] + res.width
+            
+      debug("Shifting a kid across #{delta_x}")
+      
+      if kids_to_layout.size == 1 && (min_y == nil)
+#        delta_x = 0 if kids_to_layout[0][:residue].is_chain_start?
+        kids_to_layout[0][:residue].translate(delta_x,0)
+        next
       end
-      debug("Total kids to lay out #{kids_to_layout.size}")
-      debug("Starting y_offset is #{y_offset}")
-      res.children.each { |child|
-        if laid_out_residues.include?(child[:residue])
-          debug("I have laid out #{child[:residue].name(:ic)}")
-          if ! child[:residue].is_chain_start?
-            debug("But i am skipping #{child[:residue].name(:ic)} on pos #{child[:residue].paired_residue_position} because it's not a chain start")
-            next
-          end
+
+      if min_y == nil
+        min_y = node_spacing[:y]
+        max_y = res.height
+      end
+      
+      new_chain_elements.each { |kid|
+        if kid[:residue].paired_residue_position < 4
+          min_y -= node_spacing[:y]
+          kid[:residue].translate(delta_x, min_y)
+        else
+          max_y += node_spacing[:y]
+          kid[:residue].translate(delta_x, max_y)          
         end
-        delta_x = node_spacing[:x] + res.dimensions[:width]
-        if child[:residue].is_chain_start?
-          debug("I am a chain start")
-          delta_x = 0
-        end
-        # if child[:residue].siblings.select { |sib| laid_out_residues.include?(sib) && ! sib.is_stub? }.size > 0
-        #   y_offset += 2 * node_spacing[:y] + child[:residue].dimensions[:height]
-        # end
-        debug("Doing a standard layout for children of #{sugar.sequence_from_residue(res)}, shifting a kid #{delta_x},#{y_offset}")
-        child[:residue].translate(delta_x ,y_offset)
-        y_offset += node_spacing[:y] + child[:residue].dimensions[:height]
-        debug("y_offset now is #{y_offset}")
+        debug("Min_y max_Y is #{min_y} #{max_y}")
       }
+      
+      everything_else = kids_to_layout.reject { |k| new_chain_elements.include?(k) }
+      debug("Everything else to layout is #{everything_else.size}")
+      everything_else.each { |kid|
+        if kid[:residue].paired_residue_position < 4
+          min_y -= node_spacing[:y] + kid[:residue].height
+          kid[:residue].translate(delta_x, min_y)
+        else
+          max_y += node_spacing[:y] + kid[:residue].height
+          kid[:residue].translate(delta_x, max_y)          
+        end
+        debug("Min_y max_Y is #{min_y} #{max_y}")
+      }
+
+      # debug("Total kids to lay out #{kids_to_layout.size}")
+      # debug("Starting y_offset is #{y_offset}")
+      # kids_to_layout.each { |child|
+      #   if child[:residue].is_chain_start?
+      #     debug("I am a chain start")
+      #     delta_x = 0
+      #     position = child[:residue].paired_residue_position
+      #     if position == 3 && child[:residue].name(:ic) == 'GlcNAc'
+      #       y_offset = 0
+      #     elsif position == 3
+      #       y_offset = -0.5 * node_spacing[:y]
+      #     else
+      #       y_offset = 0.5 * node_spacing[:y] + res.height
+      #     end
+      #   end
+      #   debug("Doing a standard layout for children of #{sugar.sequence_from_residue(res)}, shifting a kid #{delta_x},#{y_offset}")
+      #   child[:residue].translate(delta_x ,y_offset)
+      #   y_offset += node_spacing[:y] + child[:residue].height
+      #   if (y_offset > min_y) && (y_offset < max_y)
+      #     y_offset = max_y + node_spacing[:y]
+      #   end
+      #   debug("y_offset now is #{y_offset}")
+      # }
     }    
   end
 
@@ -251,36 +354,38 @@ class CondensedScalableLayout < CondensedLayout
   end
   
   def layout_chain(chain)
-#    to_edit = ['Gal','GlcNAc'].include?(chain[0].parent.name(:ic)) ? chain : chain[0..-1]
-    to_edit = chain
     chain_start = chain[0]
     debug("CHAINLAYOUT:Setting chain start flag on #{chain[0].name(:ic)}#{chain[0].anomer}#{chain[0].paired_residue_position}")
-    chain_desc = to_edit.collect {|r| r.name(:ic)+"#{r.anomer}#{r.paired_residue_position}"}.join(',')
+    chain_desc = chain.collect {|r| r.name(:ic)+"#{r.anomer}#{r.paired_residue_position}"}.join(',')
     debug("CHAIN:Chain is #{chain_desc}")
 
     def chain_start.is_chain_start?
       true
     end
-    to_edit.each { |residue|
-      next unless residue.parent
-      x_delta = node_spacing[:x] + residue.parent.dimensions[:width]
+    chain.each { |residue|
+      next unless residue.parent      
+      x_delta = node_spacing[:x] + residue.width
+
+      x_delta = 0 if (residue == chain_start)
+
       y_delta = 0
+
       # Push up the 6-linkage
       if residue.paired_residue_position == 6
           debug("CHAINLAYOUT:Pushing up the y delta for a 6-chain")
-          y_delta = residue.dimensions[:height] + node_spacing[:y] 
+          y_delta = node_spacing[:y]
       end
-      
+            
       if residue.name(:ic) == 'Gal'
         debug("CHAINLAYOUT:Pushing up the y delta for a Gal-multiple-chain")
-        max_sibling_height = residue.siblings.select { |r| r.name(:ic) == 'Gal' && r.anomer == 'b' }.collect { |r| r.dimensions[:height]}.max || 0
-        debug("CHAINLAYOUT:Max sibling height is #{max_sibling_height} total ")
-        y_delta = residue.paired_residue_position == 3 ? -0.5*(node_spacing[:y]+max_sibling_height) : 0.5*(node_spacing[:y]+max_sibling_height)
+#        max_sibling_height = residue.siblings.select { |r| r.name(:ic) == 'Gal' && r.anomer == 'b' }.collect { |r| r.height }.max || 0
+#        debug("CHAINLAYOUT:Max sibling height is #{max_sibling_height} total ")
+        y_delta = residue.paired_residue_position == 3 ? -1.0*(node_spacing[:y]+residue.height) : 1.0*(node_spacing[:y]+residue.parent.height)
         if residue.siblings.select { |r| r.name(:ic) == 'Gal' && r.anomer == 'b'}.size == 0
           y_delta = 0
         end
       end
-      
+      debug("Shifting chain element across #{x_delta} #{y_delta}")
       residue.translate(x_delta,y_delta)
     }
   end
@@ -306,7 +411,6 @@ class CondensedScalableLayout < CondensedLayout
     }
   end
 
-
   def do_box_layout(sugar)
     sugar.leaves.each { |residue|
       sugar.node_to_root_traversal(residue) { |res|
@@ -325,17 +429,11 @@ class CondensedScalableLayout < CondensedLayout
             debug(other_seq)
 
             res_box = res.children_box { |r|
-              ! r.is_stub? &&
-              sugar.depth(r) <= min_height &&
-              (! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)) &&
-              (! (['NeuAc','Fuc','HSO3'].include?(r.name(:ic))))
+              sugar.depth(r) <= min_height && needs_layout?(r)
             }
 
             sib_box = sibling.children_box { |r|
-              ! r.is_stub? &&
-              sugar.depth(r) <= min_height &&
-              (! (['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer == 'a' && r.paired_residue_position == 3)) &&
-              (! (['NeuAc','Fuc','HSO3'].include?(r.name(:ic))))
+              sugar.depth(r) <= min_height && needs_layout?(r)
             }
             next unless sib_box && res_box
             if (inter_box = calculate_intersection(sib_box, res_box)) != nil
