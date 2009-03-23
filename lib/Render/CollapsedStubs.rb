@@ -15,7 +15,6 @@ module CollapsedStubs
     setup_sialylation(sugar)
     setup_abo_epitopes(sugar)
     setup_sda_epitopes(sugar)
-#    setup_lacnacs(sugar)
   end
 
   def setup_hit_desaturation(sugar)
@@ -43,14 +42,6 @@ module CollapsedStubs
         a_fill ||= hsl.html
       }
       res.prototype.root.add_attribute('fill',a_fill)
-    }
-  end
-
-  def setup_lacnacs(sugar)
-    lacnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GalNAc' && r.parent && r.parent.name(:ic) == 'GlcNAc'}
-    lacnacs.each { |lacnac|
-      lacnac.linkage_at_position.callbacks.push(callback_hide_element)
-      lacnac.linkage_at_position.label_callbacks.push(callback_hide_element)      
     }
   end
 
@@ -123,6 +114,7 @@ module CollapsedStubs
     halo_element = Element.new('svg:g')
     sugar.overlays << halo_element
     sugar.residue_composition.select { |r| r.name(:ic) == 'Fuc' }.each { |fuc|
+      next if fuc.parent == sugar.root
       fuc.callbacks.push(callback_hide_element)
       fuc.linkage_at_position.callbacks.push(callback_hide_element)
       fuc.linkage_at_position.label_callbacks.push(callback_hide_element)
@@ -130,7 +122,7 @@ module CollapsedStubs
       hits = fuc.respond_to?(:hits) ? 0.3+((fuc.hits.to_f / fuc.parent.hits.to_f)*0.6) : 0.5
       start_angle = 0
       arc_angle = Math::PI / 3
-      if fuc.paired_residue_position == 3
+      if fuc.paired_residue_position == 2
         start_angle = Math::PI*5/6
       end
       if fuc.paired_residue_position == 4
@@ -139,10 +131,11 @@ module CollapsedStubs
       if fuc.paired_residue_position == 6
         start_angle = -1*Math::PI/6  
       end
-      if fuc.paired_residue_position == 2
+      if fuc.paired_residue_position == 3
         start_angle = Math::PI*0.25
         arc_angle = Math::PI*0.5
       end      
+#      fuc.callbacks.push(callback_make_halo(halo_element,fuc.parent,'none',-1,1.0,start_angle,arc_angle,colour))
       fuc.callbacks.push(callback_make_halo(halo_element,fuc.parent,colour,-1,hits,start_angle,arc_angle))
     }
   end
@@ -157,16 +150,17 @@ module CollapsedStubs
       neuac.linkage_at_position.callbacks.push(callback_hide_element)
       neuac.linkage_at_position.label_callbacks.push(callback_hide_element)
       colour = neuac.prototype.root.attribute('fill').value || '#ff00ff'
-      hits = neuac.respond_to?(:hits) ? 0.3+((neuac.hits.to_f / neuac.parent.hits.to_f)*0.6) : 0.5
+      hits = neuac.respond_to?(:hits) ? 0.0+((neuac.hits.to_f / neuac.parent.hits.to_f)*1.0) : 0.5
       start_angle = 0
       arc_angle = Math::PI / 3
       if neuac.paired_residue_position == 3
-        start_angle = Math::PI*5/6
+        start_angle = Math::PI
       end
       if neuac.paired_residue_position == 6
-        start_angle = -1*Math::PI/6  
+        start_angle = -1*Math::PI/3
       end
-      neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,colour,1,hits,start_angle,arc_angle))
+      neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,'#ffffff',1,0.5,start_angle,arc_angle,'#999999'))
+      neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,colour,1,hits*0.5,start_angle,arc_angle))
     }
   end  
 
@@ -180,20 +174,15 @@ module CollapsedStubs
       neuac.linkage_at_position.label_callbacks.push(callback_hide_element)
       colour = neuac.prototype.root.attribute('fill').value || '#0000ff'
       hits = neuac.respond_to?(:hits) ? 0.3+((neuac.hits.to_f / neuac.parent.hits.to_f)*0.6) : 0.5
-      start_angle = 0
       arc_angle = Math::PI / 3
-      if neuac.paired_residue_position == 3
-        start_angle = Math::PI*5/6
-      end
-      if neuac.paired_residue_position == 6
-        start_angle = -1*Math::PI/6  
-      end
-      neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,colour,1,hits,start_angle,arc_angle))
+      start_angle = Math::PI*1/3
+      neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,'#ffffff',1,0.5,start_angle,arc_angle,colour))
+      neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,colour,1,0.5*hits,start_angle,arc_angle))
     }
   end  
 
     
-  def callback_make_halo(parent_element,rendered_object,colour,inner_radius,radius,start_angle,arc_angle)
+  def callback_make_halo(parent_element,rendered_object,colour,inner_radius,radius,start_angle,arc_angle,border=nil)
 
     Proc.new { |element|
       cx = -1*rendered_object.centre[:x]
@@ -230,6 +219,10 @@ module CollapsedStubs
                            'fill' => colour,
                            'opacity' => '0.8',
                            })
+
+      if border != nil
+        halo.add_attributes({ 'stroke' => border, 'stroke-width' => '2' })
+      end
                           
       parent_element.add_element(halo)
     }

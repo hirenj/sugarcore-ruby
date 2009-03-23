@@ -521,11 +521,11 @@ class SvgRenderer
     linkage.callbacks.push( callback_make_linkage_background(container_el,linkage,chain_background_width,colour,colour) )    
   end
   
-  def render_text_residue_label(sugar,residue,label)
+  def render_text_residue_label(sugar,residue,label,position=nil)
     container = Element.new('svg:g')
     container.add_attribute('class','branch_point_label')
     sugar.overlays << container
-    residue.callbacks.push( callback_make_object_badge(container,residue,label,0.5,:top_right,'#9999ff'))
+    residue.callbacks.push( callback_make_object_badge(container,residue,label,0.5,(position || :top_right),'#9999ff'))
   end
   
   def callback_make_object_badge(container_element,sugar_object,label,node_ratio,corner,stroke_colour)
