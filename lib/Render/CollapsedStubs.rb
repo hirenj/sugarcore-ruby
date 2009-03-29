@@ -62,8 +62,8 @@ module CollapsedStubs
       r.linkage_at_position.label_callbacks.push(callback_hide_element)
       gal_parent.callbacks.push(
         lambda { |element|
-          cx = -1*gal_parent.centre[:x] + 10
-          cy = -1*gal_parent.centre[:y] + 10
+          cx = -1*gal_parent.center[:x] + 10
+          cy = -1*gal_parent.center[:y] + 10
           text = Element.new('svg:text')
           text.text = 'Sdα'
           text.add_attributes({ 'x' => cx, 
@@ -90,8 +90,8 @@ module CollapsedStubs
       r.linkage_at_position.label_callbacks.push(callback_hide_element)
       gal_parent.callbacks.push(
         lambda { |element|
-          cx = -1*gal_parent.centre[:x] - 5
-          cy = -1*gal_parent.centre[:y] - 5
+          cx = -1*gal_parent.center[:x] - 5
+          cy = -1*gal_parent.center[:y] - 5
           if r.name(:ic) == 'GalNAc'
             cy += 40
           end
@@ -185,8 +185,8 @@ module CollapsedStubs
   def callback_make_halo(parent_element,rendered_object,colour,inner_radius,radius,start_angle,arc_angle,border=nil)
 
     Proc.new { |element|
-      cx = -1*rendered_object.centre[:x]
-      cy = -1*rendered_object.centre[:y]
+      cx = -1*rendered_object.center[:x]
+      cy = -1*rendered_object.center[:y]
 
       actual_radius = Math.sqrt(2*((rendered_object.dimensions[:width]*0.5)**2))
 

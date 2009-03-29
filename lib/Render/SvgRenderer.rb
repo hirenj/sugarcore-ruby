@@ -251,7 +251,7 @@ class SvgRenderer
                                     }
                       )
     if use_prototypes?
-      anomer.add_attribute('transform',"rotate(#{angle},#{-1*linkage.position[:x2]},#{-1*residue.centre[:y]})")
+      anomer.add_attribute('transform',"rotate(#{angle},#{-1*linkage.position[:x2]},#{-1*residue.center[:y]})")
     end
     
     res_anomer = residue.anomer
@@ -317,7 +317,7 @@ class SvgRenderer
                       )
 
     if use_prototypes?
-      subst.add_attribute('transform',"rotate(#{angle},#{-1*linkage.position[:x2]},#{-1*residue.centre[:y]})")
+      subst.add_attribute('transform',"rotate(#{angle},#{-1*linkage.position[:x2]},#{-1*residue.center[:y]})")
     end
     linkage_position = linkage.get_position_for(parent)
     subst.text = " &#8594; #{linkage_position == 0 ? '?' : linkage_position}"
@@ -375,13 +375,13 @@ class SvgRenderer
 
   def render_curvy_link(linkage)
     line = Element.new('svg:path')
-    centre = linkage.centre
+    center = linkage.center
     quad = {}
     quad[:x] = linkage.position[:x1] + 50
     quad[:y] = linkage.position[:y1] + 50
     p1 = "#{-1*linkage.position[:x1]},#{-1*linkage.position[:y1]}"
     p2 = "#{-1*quad[:x]},#{-1*quad[:y]}"
-    p3 = "#{-1*centre[:x]},#{-1*centre[:y]}"
+    p3 = "#{-1*center[:x]},#{-1*center[:y]}"
     p4 = "#{-1*linkage.position[:x2]},#{-1*linkage.position[:y2]}"
     line.add_attribute('d', "M#{p1} Q#{p2} #{p3} T#{p4}")
     return line
@@ -552,8 +552,8 @@ class SvgRenderer
       cx = sugar_object.position[:x1]
       cy = sugar_object.position[:y1]
     when :center
-      cx = sugar_object.centre[:x]
-      cy = sugar_object.centre[:y]
+      cx = sugar_object.center[:x]
+      cy = sugar_object.center[:y]
     end
     badge = Element.new('svg:g')
 
@@ -574,10 +574,10 @@ class SvgRenderer
   
   def callback_make_linkage_background(container_element,linkage,linkage_padding,fill_colour,stroke_colour)
     Proc.new { |element|
-      x1 = -1*linkage.first_residue.centre[:x]
-      y1 = -1*linkage.first_residue.centre[:y]
-      x2 = -1*linkage.second_residue.centre[:x]
-      y2 = -1*linkage.second_residue.centre[:y]
+      x1 = -1*linkage.first_residue.center[:x]
+      y1 = -1*linkage.first_residue.center[:y]
+      x2 = -1*linkage.second_residue.center[:x]
+      y2 = -1*linkage.second_residue.center[:y]
       link_width = (x2-x1).abs
       link_height = (y2-y1).abs
       link_length = Math.hypot(link_width,link_height)
@@ -598,8 +598,8 @@ class SvgRenderer
   
   def callback_make_residue_background(container_element,residue,radius,fill_colour,stroke_colour)
     Proc.new { |element|
-      cx = -1*residue.centre[:x]
-      cy = -1*residue.centre[:y]
+      cx = -1*residue.center[:x]
+      cy = -1*residue.center[:y]
 
       back = Element.new('svg:circle')
       back.add_attributes({'cx' => cx, 'cy' => cy, 'class' => 'sugar_chain_residue_background sugar_chain_background','r' => radius, 'fill'=> fill_colour,'stroke' => stroke_colour, 'stroke-width' => '1.0' })
@@ -613,21 +613,21 @@ class SvgRenderer
       bad_linkage = Element.new('svg:g')
       bad_linkage.add_attributes({'id' => "label-#{sugar_el.object_id}" })
       
-      x1 = -1*(sugar_el.centre[:x] - 20)
-      y1 = -1*(sugar_el.centre[:y] - 20)
-      x2 = -1*(sugar_el.centre[:x] + 20)
-      y2 = -1*(sugar_el.centre[:y] + 20)
-      x3 = -1*(sugar_el.centre[:x] - 20)
-      y3 = -1*(sugar_el.centre[:y] + 20)
-      x4 = -1*(sugar_el.centre[:x] + 20)
-      y4 = -1*(sugar_el.centre[:y] - 20)
+      x1 = -1*(sugar_el.center[:x] - 20)
+      y1 = -1*(sugar_el.center[:y] - 20)
+      x2 = -1*(sugar_el.center[:x] + 20)
+      y2 = -1*(sugar_el.center[:y] + 20)
+      x3 = -1*(sugar_el.center[:x] - 20)
+      y3 = -1*(sugar_el.center[:y] + 20)
+      x4 = -1*(sugar_el.center[:x] + 20)
+      y4 = -1*(sugar_el.center[:y] - 20)
       cross = Element.new('svg:line')
       cross.add_attributes({'class' => 'bad_link', 'x1' => x1, 'x2' => x2, 'y1' => y1, 'y2' => y2, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
       cross_inv = Element.new('svg:line')
       cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
 
-      x1 = -1*(sugar_el.centre[:x] + 110)
-      y1 = -1*(sugar_el.centre[:y] - 10)
+      x1 = -1*(sugar_el.center[:x] + 110)
+      y1 = -1*(sugar_el.center[:y] - 10)
 
       max_height = content.size * 30 + 25
       
@@ -637,7 +637,7 @@ class SvgRenderer
       
       cross_mark_height = content.size == 0 ? 90 : 58
       
-      back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(sugar_el.centre[:x]+45), 'y' => -1*(sugar_el.centre[:y]+45))
+      back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(sugar_el.center[:x]+45), 'y' => -1*(sugar_el.center[:y]+45))
       back_circle_shape = Element.new('svg:circle')
       back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => border_colour, 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
       back_circle.add_element(back_circle_shape)

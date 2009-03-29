@@ -190,8 +190,8 @@ class CondensedLayout
         
         if sib_group[0] != nil && sib_group[0].parent != nil
           par_res = sib_group[0].parent
-          res_center = par_res.centre
-          curr_center = par_res.box.centre
+          res_center = par_res.center
+          curr_center = par_res.box.center
           delta = curr_center[:y] - res_center[:y]
           par_res.move(0,delta)
         end

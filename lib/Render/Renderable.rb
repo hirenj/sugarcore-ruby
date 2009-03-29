@@ -7,7 +7,7 @@ module Rectangle
     (self[:x2] - self[:x1]).abs
   end
 
-  def centre
+  def center
     { :x => ( self[:x1] + self[:x2] ) / 2 , :y => ( self[:y1] + self[:y2] ) / 2 }
   end
   
@@ -41,7 +41,7 @@ module Renderable
     @labels
   end
 
-  def centre
+  def center
     { :x => ( position[:x1] + position[:x2] ) / 2 , :y => ( position[:y1] + position[:y2] ) / 2 }
   end
 
@@ -61,8 +61,8 @@ module Renderable
   end
 
   def distance(other)
-    p1 = centre
-    p2 = other.centre
+    p1 = center
+    p2 = other.center
     Math.sqrt((p1[:x] - p2[:x])**2 + (p1[:y] - p2[:y])**2)
   end
 

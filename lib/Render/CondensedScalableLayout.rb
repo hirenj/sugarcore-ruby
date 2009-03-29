@@ -11,7 +11,7 @@ class CondensedScalableLayout < CondensedLayout
   end
   
   # Rules for layout of sugars
-  # If there's a Type I/II chain put that in the centre, and put the decorations on opposite sides
+  # If there's a Type I/II chain put that in the center, and put the decorations on opposite sides
   # If there are two Type I/II chains as children, split the difference
   # GlcNAc residues that are children of Man should be straight across
   def layout(sugar)
@@ -56,11 +56,11 @@ class CondensedScalableLayout < CondensedLayout
 
         if sib_group[0] != nil && sib_group[0].parent != nil
           par_res = sib_group[0].parent
-          res_center = par_res.centre
+          res_center = par_res.center
           kid_box = (par_res.children.reject { |child| child[:residue].is_stub? }.collect{ |child| child[:residue].box {|r| ! r.is_stub? } }.inject(nil) { |curr_box,a_box|
             a_box.union(curr_box)
           } || next)
-          curr_center = kid_box.centre
+          curr_center = kid_box.center
           if par_res.position[:y2] < kid_box[:y1] || par_res.position[:y1] > kid_box[:y2]
             delta = curr_center[:y] - res_center[:y]
             par_res.move(0,delta)
@@ -169,12 +169,12 @@ class CondensedScalableLayout < CondensedLayout
     }
     stub_residues.each { |res|
       if res.paired_residue_position <= res.siblings[0].paired_residue_position
-        res.move_absolute(res.parent.position.centre[:x]-0.5*res.dimensions[:width],res.parent.position[:y1]-node_spacing[:y]-res.dimensions[:height])
+        res.move_absolute(res.parent.position.center[:x]-0.5*res.dimensions[:width],res.parent.position[:y1]-node_spacing[:y]-res.dimensions[:height])
       else
-        res.move_absolute(res.parent.position.centre[:x]-0.5*res.dimensions[:width],node_spacing[:y]+res.parent.position[:y2])      
+        res.move_absolute(res.parent.position.center[:x]-0.5*res.dimensions[:width],node_spacing[:y]+res.parent.position[:y2])      
       end
       
-      # We need to set the linkage endpoint offset to the centre of the residue
+      # We need to set the linkage endpoint offset to the center of the residue
       
       def res.offset(linkage)
         { :x => dimensions[:width] / 2, :y => dimensions[:height] / 2 }
