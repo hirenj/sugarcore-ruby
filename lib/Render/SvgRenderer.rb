@@ -1,6 +1,15 @@
 require 'DebugLog'
 require 'Render/AbstractRenderer'
 
+require 'rubygems'
+require 'facets'
+
+class Object
+  def my_instance_eval(*args, &block)
+    block.bind(self)[*args]
+  end
+end
+
 class SvgRenderer
   include DebugLog
   include AbstractRenderer
@@ -430,7 +439,7 @@ class SvgRenderer
     end
     
     res.callbacks.each { |callback|
-      callback.call(icon)
+      self.my_instance_eval(icon,&callback)
     }
     
     return icon
