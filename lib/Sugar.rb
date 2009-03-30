@@ -127,7 +127,7 @@ class Sugar
     # If no residue is specified, the sequence is calculated from the root 
     # of the sugar.
     def sequence_from_residue(start_residue=@root)
-      info "Creating sequence"
+      debug "Creating sequence"
 		  write_sequence(start_residue)
     end
     
@@ -170,8 +170,14 @@ class Sugar
   		}    	
     end
 
-    def residue_height(start_residue=@root,absolute=false)
+    def residue_height(start_residue=@root,absolute=false)      
+            
       absolute_depth = leaves(start_residue).collect { |l| get_path_to_root(l).size }.max
+
+      if start_residue == @root
+        return absolute_depth
+      end
+
       if ! absolute && start_residue != @root
         absolute_depth -= get_path_to_root(start_residue).size
       end

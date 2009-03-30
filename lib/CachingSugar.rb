@@ -31,6 +31,7 @@ module CachingSugar
     
     class << sug
       alias_method :uncached_monosaccharide_factory, :monosaccharide_factory
+      alias_method :uncached_deep_clone, :deep_clone
       attr_accessor :cached_results
     end
 
@@ -49,6 +50,12 @@ module CachingSugar
 
   def delete_all_cached_results(residue)
     cached_results[residue.object_id] = Hash.new()
+  end
+
+  def deep_clone
+    sug = super
+    sug.cached_results = Hash.new() { |h,k| h[k] = Hash.new() }
+    sug
   end
 
   module CachedMonosaccharide

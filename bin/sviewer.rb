@@ -23,7 +23,7 @@ require 'CachingSugar'
 Monosaccharide.Load_Definitions("data/dictionary.xml")
 NamespacedMonosaccharide.Default_Namespace = :ecdb
 
-NamespacedMonosaccharide.log_level(-1)
+NamespacedMonosaccharide.log_level(5)
 CondensedScalableLayout.logger = Logger.new(STDERR)
 CondensedScalableLayout.log_level(5)
 SvgRenderer.logger = CondensedScalableLayout.logger
@@ -47,9 +47,10 @@ seq='Fuc(a1-2)[GlcNAc(b1-6)[GlcNAc(b1-3)]Gal(b1-4)GlcNAc(b1-6)][NeuAc(a2-3)][Gal
 #seq='NeuAc(a2-6)[GalNAc(a1-3)]Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)[Fuc(a1-3)[Fuc(a1-2)[NeuAc(a2-3)][Gal(a1-3)]Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-6)]Gal(b1-3)[Fuc(a1-6)]GlcNAc'
 #seq='NeuAc(a2-3)Gal(b1-4)[GalNAc(b1-4)]GlcNAc(b1-3)Gal(b1-4)GlcNAc(b1-2)[NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-4)]Man(a1-3)[NeuAc(a2-6)Gal(b1-4)GlcNAc(b1-2)[NeuAc(a2-3)Gal(b1-4)GlcNAc(b1-6)]Man(a1-6)][GlcNAc(b1-4)]Man(b1-4)GlcNAc(b1-4)GlcNAc'
 #seq='NeuAc(a2-3)Gal(b1-4)[GalNAc(b1-4)]GlcNAc(b1-3)Gal(b1-4)GlcNAc'
-sugar.extend(CachingSugar)
 
 sugar.sequence = seq
+
+sugar.extend(CachingSugar)
 
 
 

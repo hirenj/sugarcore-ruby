@@ -17,11 +17,15 @@ module CollapsedStubs
     setup_sda_epitopes(sugar)
   end
 
+  def node_copy(node)
+    Document.new(node.to_s).root
+  end
+
   def setup_hit_desaturation(sugar)
     max_hits = sugar.residue_composition.collect { |res| res.respond_to?(:hits) ? res.hits : 1 }.max
     sugar.residue_composition.each { |res|      
       default_proto = self.prototype_for_residue(res)
-      res.prototype = Document.new(default_proto.to_s).root
+      res.prototype = node_copy(default_proto) 
       res_saturation = res.respond_to?(:hits) ? res.hits.to_f : 1.0
       res_saturation /= max_hits
       saturation_min = ['NeuAc','Fuc'].include?(res.name(:ic)) ? 0.8 : 0.3

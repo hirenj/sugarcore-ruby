@@ -304,7 +304,7 @@ class CondensedScalableLayout < CondensedLayout
       child_chains.each { |child_chain|
         debug("CHAIN:A chain size is #{child_chain.size}")
         next unless child_chain.size > 1
-        info("Doing a chain layout")
+        debug("CHAIN: Doing a chain layout")
         chain_desc = child_chain.collect {|r| r.name(:ic)+"#{r.anomer},#{r.paired_residue_position}"}.join(',')
         debug("CHAIN:Chain is #{chain_desc}")
 
@@ -386,9 +386,16 @@ class CondensedScalableLayout < CondensedLayout
   end
 
   def do_box_layout(sugar)
-    sugar.leaves.each { |residue|
-      sugar.node_to_root_traversal(residue) { |res|
-        if res.parent != nil
+    
+    total_height = sugar.residue_height
+    
+    debug("Total height is #{total_height}")
+    
+    (total_height..1).each { |depth|
+      res_groups = sugar.residues_at_depth_by_parent(depth)
+      debug("Going to depth #{depth}, there are #{res_groups.size} groups")
+      res_groups.each { |sib_group|
+          res = sib_group[0]
           res_height = sugar.residue_height(res,true)
           siblings = res.siblings.reject { |r| r.is_stub? }
           siblings -= seen_stubs
@@ -426,7 +433,13 @@ class CondensedScalableLayout < CondensedLayout
             else
               debug("Not spreading siblings")
             end
-          }
+        }
+      }
+    }
+    
+    sugar.leaves.each { |residue|
+      sugar.node_to_root_traversal(residue) { |res|
+        if res.parent != nil
         end
       }
     }

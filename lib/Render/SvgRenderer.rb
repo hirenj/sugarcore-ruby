@@ -108,6 +108,7 @@ class SvgRenderer
   def render(sugar)
     return render_sugar(sugar)
   end
+
   
   def render_sugar(sugar)
   	doc = Document.new
