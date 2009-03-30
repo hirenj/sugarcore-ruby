@@ -111,7 +111,28 @@ class Monosaccharide
         @@MONO_DATA_FILENAME = Hash.new()
       end
       @@MONO_DATA_FILENAME[self] = datafile
-    	@@MONO_DATA[self] = XPath.first(Document.new( File.new(datafile) ), "/dict:glycanDict", { 'dict' => MONO_DICTIONARY_NAMESPACE })
+      @@MONO_DATA[self] = Document.new( File.new(datafile) ).root
+      
+      ns_hash = Hash.new() { |h,k| h[k] = Hash.new() }
+    
+      @@MONO_DATA[self].elements.each { |unit|
+        unit.elements.each('name') { |name_def|
+          ns_hash[name_def.attribute('ns').value][name_def.attribute('value').value] = unit
+        }        
+      }
+      
+      mono_data_xml = @@MONO_DATA[self]
+      
+      def mono_data_xml.name_cache=(val)
+        @ns_hash = val
+      end
+      
+      def mono_data_xml.name_cache
+        @ns_hash
+      end
+      
+      mono_data_xml.name_cache = ns_hash
+      
     	unless @@MONO_DATA[self] != nil
     	  raise MonosaccharideException.new('Could not load up dictionary file - expecting version '+MONO_DICTIONARY_NAMESPACE)
   	  end
@@ -518,11 +539,14 @@ class NamespacedMonosaccharide < Monosaccharide
 	  XPath.match(data_source, '@*').select {|att| att.prefix = 'xmlns' }.each { |ns_dec|
 	    namespaces[ns_dec.value] = ns_dec.name
 	  }
-  	mono_data_node = XPath.first(	data_source, 
-									"./dict:unit[dict:name[@ns='#{namespaces[ns]}' and @value='#{@name}']]",
-									{ 'dict' => MONO_DICTIONARY_NAMESPACE }
-  									 )
+    # mono_data_node = XPath.first( data_source, 
+    #                   "./dict:unit[dict:name[@ns='#{namespaces[ns]}' and @value='#{@name}']]",
+    #                   { 'dict' => MONO_DICTIONARY_NAMESPACE }
+    #                  )
 
+    mono_data_node = nil
+
+    mono_data_node = data_source.name_cache[namespaces[ns]][@name]
   									 
   #		string(namespace::*[name() =substring-before(@type, ':')]) 
 			

@@ -189,8 +189,10 @@ class CondensedScalableLayout < CondensedLayout
 
   def do_basic_layout(sugar,laid_out_residues)
     debug("These are the laid out already residues")
-    laid_out_residues.each{ |res|
-      debug(sugar.sequence_from_residue(res))
+    debug(nil) {
+      laid_out_residues.collect{ |res|
+        sugar.sequence_from_residue(res)
+      }.join(',')
     }
     
     debug("Laid out residues #{laid_out_residues.collect {|r| r.name(:ic)+"#{r.paired_residue_position}"}.join(',')}")
@@ -198,7 +200,10 @@ class CondensedScalableLayout < CondensedLayout
     sugar.depth_first_traversal { |res| 
       kid_size = 0
       
-      debug("For residue #{sugar.sequence_from_residue(res)}")
+
+      debug(nil) {
+        "For residue #{sugar.sequence_from_residue(res)}" 
+      }
       
       #accept if kid is a chain start
       #accept if kid is not a stub
@@ -212,7 +217,9 @@ class CondensedScalableLayout < CondensedLayout
         ( kid[:residue].is_chain_start? || ! laid_out_residues.include?(kid[:residue]) )
       }
       
-      debug("Kids needing layout"+kids_to_layout.collect { |k| sugar.sequence_from_residue(k[:residue]) }.join(','))
+      debug(nil) {
+        "Kids needing layout"+kids_to_layout.collect { |k| sugar.sequence_from_residue(k[:residue]) }.join(',')
+      }
       
       total_kid_size = kids_to_layout.inject(0) { |sum,kid| sum += kid[:residue].height }
       existing_chain_elements = res.children.select { |kid|
@@ -220,7 +227,9 @@ class CondensedScalableLayout < CondensedLayout
         ( laid_out_residues.include?(kid[:residue]) && ! kid[:residue].is_chain_start? )
       }
 
-      debug("Existing chains"+existing_chain_elements.collect { |k| sugar.sequence_from_residue(k[:residue]) }.join(','))
+      debug(nil) {
+        "Existing chains"+existing_chain_elements.collect { |k| sugar.sequence_from_residue(k[:residue]) }.join(',')
+      }
 
       max_y = existing_chain_elements.collect { |kid| kid[:residue].position[:y2] - res.position[:y1] }.max
       min_y = existing_chain_elements.collect { |kid| kid[:residue].position[:y1] - res.position[:y1] }.min
@@ -229,7 +238,9 @@ class CondensedScalableLayout < CondensedLayout
         laid_out_residues.include?(kid[:residue]) && kid[:residue].is_chain_start?        
       }
 
-      debug("New chains"+new_chain_elements.collect { |k| sugar.sequence_from_residue(k[:residue])+k[:residue].paired_residue_position.to_s }.join(','))
+      debug(nil) {
+        "New chains"+new_chain_elements.collect { |k| sugar.sequence_from_residue(k[:residue])+k[:residue].paired_residue_position.to_s }.join(',')
+      }
 
       
       debug("Min_y max_Y is #{min_y} #{max_y}")
@@ -385,11 +396,14 @@ class CondensedScalableLayout < CondensedLayout
             sib_height = sugar.residue_height(sibling,true)
             min_height = [res_height,sib_height].min
             debug("Minimum height is res #{res_height}, sib #{sib_height}")
-            debug("Sibling currently at depth #{sugar.depth(sibling)} test res at #{sugar.depth(res)}")
-            a_seq = sugar.sequence_from_residue(sibling)+sibling.anomer+sibling.paired_residue_position.to_s
-            other_seq = sugar.sequence_from_residue(res)+res.anomer+res.paired_residue_position.to_s
-            debug(a_seq)
-            debug(other_seq)
+            debug(nil) {
+              "Sibling currently at depth #{sugar.depth(sibling)} test res at #{sugar.depth(res)}" 
+            }
+            debug(nil) {
+              a_seq = sugar.sequence_from_residue(sibling)+sibling.anomer+sibling.paired_residue_position.to_s
+              other_seq = sugar.sequence_from_residue(res)+res.anomer+res.paired_residue_position.to_s
+              a_seq +"\n"+other_seq+"\n"
+            }
 
             res_box = res.children_box { |r|
               sugar.depth(r) <= min_height && needs_layout?(r)

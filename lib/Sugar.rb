@@ -127,7 +127,7 @@ class Sugar
     # If no residue is specified, the sequence is calculated from the root 
     # of the sugar.
     def sequence_from_residue(start_residue=@root)
-      debug "Creating sequence"
+      info "Creating sequence"
 		  write_sequence(start_residue)
     end
     
@@ -218,7 +218,9 @@ class Sugar
     
     # The path to the root residue from the specified residue
   	def get_path_to_root(start_residue=@root)
-      node_to_root_traversal(start_residue)
+  	  @cached_path ||= {}
+  	  @cached_path[start_residue] ||= node_to_root_traversal(start_residue)
+  	  @cached_path[start_residue]
   	end
     
     def get_sugar_to_root(start_residue=@root)
