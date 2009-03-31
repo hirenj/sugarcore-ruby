@@ -179,7 +179,7 @@ class SvgRenderer
     if width == :auto
       doc.root.add_attribute('width', (sugbox.width + padding))
       doc.root.add_attribute('height', (sugbox.height + padding))
-    elsif width && width < 10
+    elsif width && width.to_i < 10
       doc.root.add_attribute('width', ((sugbox.width + padding) * width).floor)
       doc.root.add_attribute('height', ((sugbox.height + padding) * width).floor)
     end

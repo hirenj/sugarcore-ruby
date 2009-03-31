@@ -1,6 +1,7 @@
 require 'test/unit'
 require 'Sugar'
 require 'MultiSugar'
+require 'CachingSugar'
 
 NamespacedMonosaccharide.Default_Namespace = :ic
 
@@ -318,6 +319,33 @@ __FOO__
     assert_equal( [], sugar.intersect(sugar4).collect { |residue| 
       residue.name
     })
+
+  end
+  
+  def test_sugar_caching
+		sugar = build_multi_sugar_from_string( SMALL_STRUCTURE )
+    sugar.extend(CachingSugar)
+
+    assert_equal(2,sugar.residue_composition.size)
+
+
+    mono1 = sugar.monosaccharide_factory('ic:Gal')
+
+    ex_leaf = sugar.leaves[0]
+
+    assert_equal(2,sugar.residue_composition.size)
+
+    assert_equal(1,ex_leaf.residue_composition.size)
+
+    ex_leaf.add_child(mono1, sugar.linkage_factory('b1-3'))
+
+    assert_equal(3,sugar.residue_composition.size)
+    assert_equal(2, ex_leaf.residue_composition.size)
+
+    mono1.parent.remove_child(mono1)
+
+    assert_equal(1,ex_leaf.residue_composition.size)
+    assert_equal(2,sugar.residue_composition.size)
 
   end
   

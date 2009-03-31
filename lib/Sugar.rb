@@ -133,6 +133,7 @@ class Sugar
     
     # Find the residue composition of this sugar
     def residue_composition(start_residue=@root)
+      debug "Un-cached residue_composition #{caller[0]}"
     	return start_residue ? start_residue.residue_composition : []
     end
     
@@ -165,7 +166,7 @@ class Sugar
     # List the leaf elements of this sugar - any residues which don't have 
     # any child residues
     def leaves(start_residue=@root)
-  		return residue_composition(start_residue).delete_if { |residue|
+  		return residue_composition(start_residue).reject { |residue|
   			residue.children.length != 0
   		}    	
     end
@@ -355,18 +356,7 @@ class Sugar
     # not exist in the sugar given as an argument
     def subtract(sugar, &block)
       matched = self.intersect(sugar,&block)
-      results = Array.new()
-      leaves.each { |leaf|
-        node_to_root_traversal(leaf) { |residue|
-          if ! matched.include?(residue) && ! results.include?(residue)
-            results << residue
-          end
-          if matched.include?(residue.parent)
-            raise SugarTraversalBreakSignal.new()
-          end
-        }
-      }
-      results
+      residue_composition - matched
     end
 
     def union(sugar, &block)
@@ -413,12 +403,19 @@ class Sugar
       return sugars_equal && myresidues.empty? && compresidues.empty?
     end
 
-    def find_residue_by_unambiguous_path(path)
+    def find_residue_by_unambiguous_path(path,&block)
+      looper_path = [] + path
     	results = [@root]
-    	while (path || []).size > 0
-    	  path_element = path.shift
+    	while (looper_path || []).size > 0
+    	  path_element = looper_path.shift
     	  results = results.collect { |loop_residue|
-    	    [loop_residue.residue_at_position(path_element[:link])].flatten.delete_if { |res| ! res.equals?(path_element[:residue]) }
+    	    [loop_residue.residue_at_position(path_element[:link])].flatten.select { |res|
+    	      if block_given?
+    	        yield(res,path_element[:residue])
+  	        else
+     	        res.equals?(path_element[:residue])  	          
+	          end
+    	    }
     	  }.flatten    	  
   	  end
   	  if results.size > 1

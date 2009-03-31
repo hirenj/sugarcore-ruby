@@ -82,16 +82,20 @@ module Sugar::MultiSugar
         test_residue = mypath.shift
         (residues || []).each { |residue|
           test_success = false
-          if block_given?
-             if yield(residue, test_residue, matched[residue])
-               matched[residue] = true
-               test_success = true
-             end
-          else
-            if residue.equals?(test_residue)
-              matched[residue] = true
-              test_success = true
+          if ! matched[residue]
+            if block_given?
+               if yield(residue, test_residue, matched[residue])
+                 matched[residue] = true
+                 test_success = true
+               end
+            else
+              if residue.equals?(test_residue)
+                matched[residue] = true
+                test_success = true
+              end
             end
+          else
+            test_success = true
           end
           if test_success && mypath[0] != nil
             path_follower.call(residue.residue_at_position(mypath[0].paired_residue_position()), nil)
