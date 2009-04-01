@@ -450,6 +450,9 @@ class SvgRenderer
   attr_accessor :chain_background_padding
   
   def render_chains(sugar,chains,chain_class)
+    
+    return unless chains
+    
     chains_container = Element.new('svg:g')
     sugar.underlays << chains_container
     chains_container.add_attribute('class',chain_class)
@@ -481,6 +484,9 @@ class SvgRenderer
 
   
   def render_valid_decorations(sugar,decorations)
+
+    return unless decorations
+    
     decorations_container = Element.new('svg:g')
     decorations_container.add_attribute('class','sugar_decorations valid_sugar_decorations')
 
@@ -491,6 +497,9 @@ class SvgRenderer
   end
 
   def render_invalid_decorations(sugar,decorations)
+    
+    return unless decorations 
+    
     decorations_container = Element.new('svg:g')
     decorations_container.add_attribute('class','sugar_decorations invalid_sugar_decorations')
     sugar.underlays << decorations_container      
