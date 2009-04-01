@@ -150,7 +150,7 @@ module Sugar::MultiSugar
     positions.each { |pos|
       residues = start_residue.residue_at_position(pos)
       residues.each { |residue|
-        if residue && residue.name(:ic) == next_name
+        if residue && residue.name(:ic) == next_name && residue.anomer == 'b'
           new_chains = get_chains_from_residue(residue).collect {|arr| [start_residue] + arr }
           if new_chains.size == 0
             new_chains = [[start_residue,residue]]

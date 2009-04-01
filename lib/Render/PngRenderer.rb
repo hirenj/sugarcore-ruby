@@ -33,7 +33,10 @@ class PngRenderer
     temp_svg << svg_string
     temp_svg.close
     the_svg = File.new(temp_svg.path)
-    img = Magick::Image::read(the_svg) { self.format = 'SVG' }
+    img = Magick::Image::read(the_svg) {
+      self.format = 'SVG'
+      self.background_color = 'none'
+    }
     the_svg.close
     if ( width != nil && height != nil )
       img.first.resize_to_fit!(width,height)
