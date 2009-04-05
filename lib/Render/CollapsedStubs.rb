@@ -70,12 +70,12 @@ module CollapsedStubs
           cy = -1*gal_parent.center[:y] + 10
           text = Element.new('svg:text')
           text.text = 'Sdα'
-          text.add_attributes({ 'x' => cx, 
-                                          'y' => cy, 
+          text.add_attributes({ 'x' => cx.to_s, 
+                                          'y' => cy.to_s, 
                                           'font-size'=>"20",
                                           'font-family' => 'Helvetica,Arial,Sans',
                                           'text-anchor' => 'middle',
-                                          'textLength' => ((gal_parent.width / 2)-10),
+                                          'textLength' => ((gal_parent.width / 2)-10).to_s,
                                           'style'=>'fill:#000000;stroke:#000000;stroke-width:0pt;'
                                           })
           sda_overlay.add_element(text)
@@ -101,8 +101,8 @@ module CollapsedStubs
           end
           text = Element.new('svg:text')
           text.text = (r.name(:ic) == 'Gal') ? 'A' : 'B'
-          text.add_attributes({ 'x' => cx, 
-                                          'y' => cy, 
+          text.add_attributes({ 'x' => cx.to_s, 
+                                          'y' => cy.to_s, 
                                           'font-size'=>"30",
                                           'font-family' => 'Helvetica,Arial,Sans',
                                           'text-anchor' => 'middle',
