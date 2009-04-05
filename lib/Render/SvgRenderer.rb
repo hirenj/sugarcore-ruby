@@ -390,10 +390,10 @@ class SvgRenderer
 
   def render_straight_link(linkage)
     line = Element.new('svg:line')
-    line.add_attribute('x1',-1*linkage.position[:x1])
-    line.add_attribute('y1',-1*linkage.position[:y1])
-    line.add_attribute('x2',-1*linkage.position[:x2])
-    line.add_attribute('y2',-1*linkage.position[:y2])
+    line.add_attribute('x1',-1*linkage.position[:x1].to_s)
+    line.add_attribute('y1',-1*linkage.position[:y1].to_s)
+    line.add_attribute('x2',-1*linkage.position[:x2].to_s)
+    line.add_attribute('y2',-1*linkage.position[:y2].to_s)
     return line
   end
   
