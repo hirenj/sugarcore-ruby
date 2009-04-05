@@ -87,8 +87,8 @@ class SvgRenderer
       end
       prototypes[res_id].add_namespace('svg',SVG_ELEMENT_NS)
       
-      prototypes[res_id].add_attribute('width', 100)
-      prototypes[res_id].add_attribute('height', 100)
+      prototypes[res_id].add_attribute('width', '100')
+      prototypes[res_id].add_attribute('height', '100')
       prototypes[res_id].add_attribute('viewBox', '0 0 100 100')
 
       XPath.each(res.raw_data_node, "./disp:icon[@scheme='#{scheme}']/disp:anchor", { 'disp' => DISPLAY_ELEMENT_NS }) { |anchor|
@@ -117,8 +117,8 @@ class SvgRenderer
   	doc.root.add_attribute('width', '100%')
   	doc.root.add_attribute('height', '100%')
   	if (width != nil && height != nil)
-    	doc.root.add_attribute('width', width)
-    	doc.root.add_attribute('height', height)  	  
+    	doc.root.add_attribute('width', width.to_s)
+    	doc.root.add_attribute('height', height.to_s)  	  
 	  end
   	doc.root.add_attribute('id', sugar.name)
   	doc.root.add_namespace('svg', SVG_ELEMENT_NS)
@@ -177,11 +177,11 @@ class SvgRenderer
   	doc.root.add_attribute('viewBox', "#{sugbox[:x2] - padding} #{sugbox[:y2] - padding } #{sugbox.width + 2*padding} #{sugbox.height + 2*padding}")
   	  	  	
     if width == :auto
-      doc.root.add_attribute('width', (sugbox.width + padding))
-      doc.root.add_attribute('height', (sugbox.height + padding))
+      doc.root.add_attribute('width', (sugbox.width + padding).to_s)
+      doc.root.add_attribute('height', (sugbox.height + padding).to_s)
     elsif width && width.to_i < 10
-      doc.root.add_attribute('width', ((sugbox.width + padding) * width).floor)
-      doc.root.add_attribute('height', ((sugbox.height + padding) * width).floor)
+      doc.root.add_attribute('width', ((sugbox.width + padding) * width).floor.to_s)
+      doc.root.add_attribute('height', ((sugbox.height + padding) * width).floor.to_s)
     end
   	doc.root.add_attribute('preserveAspectRatio', 'xMinYMin')
 
@@ -431,8 +431,8 @@ class SvgRenderer
     # self.max_x = -res.dimensions[:width]-res.position[:x2]
     # self.max_y = -res.dimensions[:height]-res.position[:y2]
     
-    icon.add_attribute('width',res.dimensions[:width])
-    icon.add_attribute('height',res.dimensions[:height])
+    icon.add_attribute('width',res.dimensions[:width].to_s)
+    icon.add_attribute('height',res.dimensions[:height].to_s)
 
     
     if res.labels.length > 0 
