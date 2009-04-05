@@ -358,7 +358,7 @@ class SvgRenderer
       line = render_straight_link(linkage)
     end
 
-    line.add_attribute('stroke-width',3)
+    line.add_attribute('stroke-width','3')
     line.add_attribute('stroke','black')
     line.add_attribute('fill','none')
     if (scheme == 'oxford' && linkage.reducing_end_substituted_residue.anomer == 'a')
