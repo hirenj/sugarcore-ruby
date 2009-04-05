@@ -243,8 +243,8 @@ class SvgRenderer
     
     
     anomer = Element.new('svg:text',nil,{:raw => :all})
-    anomer.add_attributes({ 'x' => xpos, 
-                                    'y' => ypos, 
+    anomer.add_attributes({ 'x' => xpos.to_s, 
+                                    'y' => ypos.to_s, 
                                     'font-size'=>"#{font_size}",
                                     'font-family' => 'Helvetica,Arial,Sans',
                                     'text-anchor' => 'middle',
@@ -308,8 +308,8 @@ class SvgRenderer
       end
     end
 
-    subst.add_attributes({  'x' => xpos, 
-                            'y' => ypos, 
+    subst.add_attributes({  'x' => xpos.to_s, 
+                            'y' => ypos.to_s, 
                             'font-size'=>"#{font_size}",
                             'font-family' => 'Helvetica,Arial,Sans',
                             'text-anchor' => 'middle',
@@ -570,11 +570,11 @@ class SvgRenderer
     badge_width = node_ratio * sugar_object.width.to_f
     
     back_circle_shape = Element.new('svg:circle')
-    back_circle_shape.add_attributes({'cx' => -1*cx, 'cy' => -1*cy, 'r' =>  badge_width / 2, 'stroke' => stroke_colour, 'stroke-width' => '5', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 1 })
+    back_circle_shape.add_attributes({'cx' => "#{-1*cx}", 'cy' => "#{-1*cy}", 'r' =>  "#{badge_width / 2}", 'stroke' => stroke_colour, 'stroke-width' => '5', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => '1' })
     badge.add_element(back_circle_shape)
     
     text = Element.new('svg:text')
-    text.add_attributes({ 'x' => -1*(cx), 'y' => -1*(cy), 'text-anchor' => 'middle', 'dominant-baseline' => 'middle', 'width' => badge_width, 'font-size' => badge_width - 15, 'height' => badge_width - 15 })
+    text.add_attributes({ 'x' => "#{-1*(cx)}", 'y' => "#{-1*(cy)}", 'text-anchor' => 'middle', 'dominant-baseline' => 'middle', 'width' => "#{badge_width}", 'font-size' => "#{badge_width - 15}", 'height' => "#{badge_width - 15}" })
     text.text = label
     badge.add_element(text)
     
@@ -612,7 +612,7 @@ class SvgRenderer
       cy = -1*residue.center[:y]
 
       back = Element.new('svg:circle')
-      back.add_attributes({'cx' => cx, 'cy' => cy, 'class' => 'sugar_chain_residue_background sugar_chain_background','r' => radius, 'fill'=> fill_colour,'stroke' => stroke_colour, 'stroke-width' => '1.0' })
+      back.add_attributes({'cx' => cx.to_s, 'cy' => cy.to_s, 'class' => 'sugar_chain_residue_background sugar_chain_background','r' => radius.to_s, 'fill'=> fill_colour,'stroke' => stroke_colour, 'stroke-width' => '1.0' })
       container_element.add_element(back)
     }
   end
@@ -632,9 +632,9 @@ class SvgRenderer
       x4 = -1*(sugar_el.center[:x] + 20)
       y4 = -1*(sugar_el.center[:y] - 20)
       cross = Element.new('svg:line')
-      cross.add_attributes({'class' => 'bad_link', 'x1' => x1, 'x2' => x2, 'y1' => y1, 'y2' => y2, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
+      cross.add_attributes({'class' => 'bad_link', 'x1' => x1.to_s, 'x2' => x2.to_s, 'y1' => y1.to_s, 'y2' => y2.to_s, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
       cross_inv = Element.new('svg:line')
-      cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
+      cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3.to_s, 'x2' => x4.to_s, 'y1' => y3.to_s, 'y2' => y4.to_s, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
 
       x1 = -1*(sugar_el.center[:x] + 110)
       y1 = -1*(sugar_el.center[:y] - 10)
@@ -642,20 +642,20 @@ class SvgRenderer
       max_height = content.size * 30 + 25
       
       back_el = Element.new('svg:rect')
-      back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => max_height, 'stroke' => border_colour, 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
+      back_el.add_attributes({'x' => x1.to_s, 'y' => y1.to_s, 'rx' => '10', 'ry' => '10', 'width' => '220', 'height' => max_height.to_s, 'stroke' => border_colour, 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => '0.5' })
       back_circle = Element.new('svg:svg')
       
       cross_mark_height = content.size == 0 ? 90 : 58
       
-      back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(sugar_el.center[:x]+45), 'y' => -1*(sugar_el.center[:y]+45))
+      back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => "#{-1*(sugar_el.center[:x]+45)}", 'y' => "#{-1*(sugar_el.center[:y]+45)}")
       back_circle_shape = Element.new('svg:circle')
-      back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => border_colour, 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
+      back_circle_shape.add_attributes({'cx' => '45', 'cy' => '45', 'r' => '40', 'stroke' => border_colour, 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => '0.5' })
       back_circle.add_element(back_circle_shape)
       text = Element.new('svg:text')
-      text.add_attributes({ 'x' => x1, 'y' => y1+10, 'width' => 210, 'font-size' => 30, 'height' => max_height })
+      text.add_attributes({ 'x' => x1.to_s, 'y' => "#{y1+10}", 'width' => '210', 'font-size' => '30', 'height' => "#{max_height}" })
       content.each { |content_line|
         li = Element.new('svg:tspan')
-        li.add_attributes({'x' => x1+20, 'dy' => 30 })
+        li.add_attributes({'x' => "#{x1+20}", 'dy' => '30' })
         li.text = content_line
         text.add_element(li)
       }
