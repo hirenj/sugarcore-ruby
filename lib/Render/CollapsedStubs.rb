@@ -22,10 +22,25 @@ module CollapsedStubs
   end
 
   def setup_hit_desaturation(sugar)
-    max_hits = sugar.residue_composition.collect { |res| res.respond_to?(:hits) ? res.hits : 1 }.max
     sugar.residue_composition.each { |res|      
       default_proto = self.prototype_for_residue(res)
       res.prototype = node_copy(default_proto) 
+      a_fill = nil
+      res.prototype.root.each { |proto_el|
+        next unless proto_el.is_a?(REXML::Element)
+        convert_fill(proto_el)
+        a_fill = proto_el.attribute('fill')
+      }
+      res.prototype.root.add_attribute('fill',a_fill)
+    }
+
+    max_hits = sugar.residue_composition.collect { |res| res.respond_to?(:hits) ? (res.hits || 0) : 0 }.max
+
+    if max_hits == 0
+      return
+    end
+
+    sugar.residue_composition.each { |res|      
       res_saturation = res.respond_to?(:hits) ? res.hits.to_f : 1.0
       res_saturation /= max_hits
       saturation_min = ['NeuAc','Fuc'].include?(res.name(:ic)) ? 0.8 : 0.3
@@ -34,7 +49,6 @@ module CollapsedStubs
       a_fill = nil
       res.prototype.root.each { |proto_el|
         next unless proto_el.is_a?(REXML::Element)
-        convert_fill(proto_el)
         curr_fill = proto_el.attribute('fill')
         next unless curr_fill
         hsl = Color::RGB.from_html(curr_fill.value).to_hsl
@@ -117,7 +131,7 @@ module CollapsedStubs
   def setup_fucosylation(sugar)
     halo_element = Element.new('svg:g')
     sugar.overlays << halo_element
-    sugar.residue_composition.select { |r| r.name(:ic) == 'Fuc' }.each { |fuc|
+    sugar.residue_composition.select { |r| r.name(:ic) == 'Fuc' && sugar.root != r }.each { |fuc|
       next if fuc.parent == sugar.root
       fuc.callbacks.push(callback_hide_element)
       fuc.linkage_at_position.callbacks.push(callback_hide_element)
@@ -154,7 +168,7 @@ module CollapsedStubs
       neuac.linkage_at_position.callbacks.push(callback_hide_element)
       neuac.linkage_at_position.label_callbacks.push(callback_hide_element)
       colour = neuac.prototype.root.attribute('fill').value || '#ff00ff'
-      hits = neuac.respond_to?(:hits) ? 0.0+((neuac.hits.to_f / neuac.parent.hits.to_f)*1.0) : 0.5
+      hits = (neuac.respond_to?(:hits) && neuac.hits > 0) ? 0.0+((neuac.hits.to_f / neuac.parent.hits.to_f)*1.0) : 0.5
       start_angle = 0
       arc_angle = Math::PI / 3
       if neuac.paired_residue_position == 3
@@ -177,7 +191,7 @@ module CollapsedStubs
       neuac.linkage_at_position.callbacks.push(callback_hide_element)
       neuac.linkage_at_position.label_callbacks.push(callback_hide_element)
       colour = neuac.prototype.root.attribute('fill').value || '#0000ff'
-      hits = neuac.respond_to?(:hits) ? 0.3+((neuac.hits.to_f / neuac.parent.hits.to_f)*0.6) : 0.5
+      hits = (neuac.respond_to?(:hits) && neuac.hits > 0) ? 0.3+((neuac.hits.to_f / neuac.parent.hits.to_f)*0.6) : 0.5
       arc_angle = Math::PI / 3
       start_angle = Math::PI*1/3
       neuac.callbacks.push(callback_make_halo(halo_element,neuac.parent,'#ffffff',1,0.5,start_angle,arc_angle,colour))

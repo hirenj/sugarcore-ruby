@@ -412,6 +412,18 @@ __FOO__
     assert_equal('Fuc(a1-2)Gal(b1-u)GlcNAc(b1-u)[Fuc(a1-2)Gal(b1-4)GlcNAc(b1-6)][NeuAc(a2-6)][Fuc(a1-2)Gal(b1-u)[Fuc(a1-u)]GlcNAc(b1-u)[Fuc(a1-2)]Gal(b1-u)[Fuc(a1-2)[Gal(b1-4)GlcNAc(b1-6)][NeuAc(a2-6)][Fuc(a1-3)[Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-3)][NeuAc(a2-3)]Gal(b1-4)][Fuc(a1-4)][Fuc(a1-3)][Fuc(a1-2)[NeuAc(a2-3)][NeuAc(a2-3)Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)]Gal(b1-3)]GlcNAc(b1-3)][GalNAc(a1-3)][Gal(a1-3)][Fuc(a1-2)][NeuAc(a2-u)]Gal', end_sugar.sequence) 
   end
 
+  def test_o_linked_union
+    sugs = ['Gal(b1-3)GalNAc',
+    'GlcNAc(b1-3)GalNAc',
+    'Gal(b1-3)[GlcNAc(b1-6)]GalNAc',
+    'GlcNAc(b1-3)[GlcNAc(b1-6)]GalNAc',
+    'NeuAc(a2-3)Gal(b1-3)GalNAc']
+    sugs.collect! { |sug| build_multi_sugar_from_string(sug) }
+    first = sugs.shift
+    while (sugs.size > 0)
+      first.union!(sugs.shift)
+    end
+  end
 
   def test_multi_sugar_union
     sugar = build_multi_sugar_from_string("GlcNAc(b1-4)GlcNAc")

@@ -619,7 +619,6 @@ class SvgRenderer
   
   def callback_make_element_label(container_element,sugar_el,content,border_colour)
     lambda { |element|
-
       bad_linkage = Element.new('svg:g')
       bad_linkage.add_attributes({'id' => "label-#{sugar_el.object_id}" })
       

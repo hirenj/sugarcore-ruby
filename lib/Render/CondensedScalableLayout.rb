@@ -146,14 +146,23 @@ class CondensedScalableLayout < CondensedLayout
 
     if ['Gal','GalNAc'].include?(residue.name(:ic))
       if residue.anomer == 'a' && residue.paired_residue_position == 3
+        def residue.is_stub?
+          true
+        end
         return false
       end
       if residue.name(:ic) == 'GalNAc' && residue.anomer == 'b' && residue.paired_residue_position == 4 && residue.parent.name(:ic) == 'Gal'
+        def residue.is_stub?
+          true
+        end
         return false
       end
     end
     
     if ['NeuAc','NeuGc','Fuc','HSO3'].include?(residue.name(:ic))
+      def residue.is_stub?
+        true
+      end
       return false
     end
     
