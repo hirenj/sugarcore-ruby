@@ -617,7 +617,7 @@ class SvgRenderer
     }
   end
   
-  def callback_make_element_label(container_element,sugar_el,content,border_colour)
+  def callback_make_element_label(container_element,sugar_el,content,border_colour,draw_cross=false)
     lambda { |element|
       bad_linkage = Element.new('svg:g')
       bad_linkage.add_attributes({'id' => "label-#{sugar_el.object_id}" })
@@ -630,11 +630,14 @@ class SvgRenderer
       y3 = -1*(sugar_el.center[:y] + 20)
       x4 = -1*(sugar_el.center[:x] + 20)
       y4 = -1*(sugar_el.center[:y] - 20)
-      cross = Element.new('svg:line')
-      cross.add_attributes({'class' => 'bad_link', 'x1' => x1.to_s, 'x2' => x2.to_s, 'y1' => y1.to_s, 'y2' => y2.to_s, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
-      cross_inv = Element.new('svg:line')
-      cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3.to_s, 'x2' => x4.to_s, 'y1' => y3.to_s, 'y2' => y4.to_s, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
 
+      if draw_cross
+        cross = Element.new('svg:line')
+        cross.add_attributes({'class' => 'bad_link', 'x1' => x1.to_s, 'x2' => x2.to_s, 'y1' => y1.to_s, 'y2' => y2.to_s, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
+        cross_inv = Element.new('svg:line')
+        cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3.to_s, 'x2' => x4.to_s, 'y1' => y3.to_s, 'y2' => y4.to_s, 'stroke'=>border_colour,'stroke-width'=>'5.0'})
+      end
+      
       x1 = -1*(sugar_el.center[:x] + 110)
       y1 = -1*(sugar_el.center[:y] - 10)
 
@@ -661,8 +664,10 @@ class SvgRenderer
       bad_linkage.add_element(back_el) if content.size > 0
       bad_linkage.add_element(back_circle)        
       bad_linkage.add_element(text) if content.size > 0
-      bad_linkage.add_element(cross)
-      bad_linkage.add_element(cross_inv)
+      if draw_cross
+        bad_linkage.add_element(cross)
+        bad_linkage.add_element(cross_inv)
+      end
       container_element.add_element(bad_linkage)
       
       drop_shadow = Element.new('svg:g')
