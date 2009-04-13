@@ -27,6 +27,16 @@ class CondensedScalableLayout < CondensedLayout
     do_center_boxes_more(sugar)
     do_sibling_bunching(sugar)
     do_multi_residue_widening(sugar)
+    class << sugar
+      alias_method :uncondensed_box, :box
+      def box
+        box_block = lambda { |r|
+          ! r.is_stub?
+        }
+        return uncondensed_box(&box_block)
+      end
+    end
+    
   end
 
   def do_multi_residue_widening(sugar)

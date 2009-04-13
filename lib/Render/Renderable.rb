@@ -331,8 +331,8 @@ module Renderable::Sugar
     @underlays
   end
 
-  def box
-    @root.box
+  def box(&block)
+    @root.box(&block)
   end
     
 end
