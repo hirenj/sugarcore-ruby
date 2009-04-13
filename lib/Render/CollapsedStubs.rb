@@ -164,6 +164,7 @@ module CollapsedStubs
     sugar.overlays << halo_element
     neuacs = sugar.residue_composition.select { |r| r.name(:ic) == 'NeuAc' }
     neuacs.each { |neuac|
+      next unless neuac.parent
       neuac.callbacks.push(callback_hide_element)
       neuac.linkage_at_position.callbacks.push(callback_hide_element)
       neuac.linkage_at_position.label_callbacks.push(callback_hide_element)
