@@ -132,7 +132,7 @@ module CollapsedStubs
     halo_element = Element.new('svg:g')
     sugar.overlays << halo_element
     sugar.residue_composition.select { |r| r.name(:ic) == 'Fuc' && sugar.root != r }.each { |fuc|
-      next if fuc.parent == sugar.root
+      next if fuc.parent == sugar.root && fuc.parent.name(:ic) == 'GlcNAc'
       fuc.callbacks.push(callback_hide_element)
       fuc.linkage_at_position.callbacks.push(callback_hide_element)
       fuc.linkage_at_position.label_callbacks.push(callback_hide_element)
@@ -154,7 +154,7 @@ module CollapsedStubs
         arc_angle = Math::PI*0.5
       end      
 #      fuc.callbacks.push(callback_make_halo(halo_element,fuc.parent,'none',-1,1.0,start_angle,arc_angle,colour))
-      fuc.callbacks.push(callback_make_halo(halo_element,fuc.parent,colour,-1,hits,start_angle,arc_angle))
+      fuc.callbacks.push(callback_make_wedge(halo_element,fuc.parent,colour,0,hits,start_angle,arc_angle))
     }
   end
 
@@ -246,5 +246,45 @@ module CollapsedStubs
       parent_element.add_element(halo)
     }
   end
+
+  def callback_make_wedge(parent_element,rendered_object,colour,inner_radius,radius,start_angle,arc_angle,border=nil)
+
+    Proc.new { |element|
+      cx = -1*rendered_object.center[:x]
+      cy = -1*rendered_object.center[:y]
+
+      actual_radius = Math.sqrt(2*((rendered_object.dimensions[:width]*0.5)**2))
+
+      minor_radius = inner_radius
+      major_radius = minor_radius+radius*actual_radius
+
+      major_arc_start_x = cx - major_radius * Math.sin(start_angle)
+      major_arc_start_y = cy - major_radius * Math.cos(start_angle)
+
+      major_arc_end_x = cx - major_radius * Math.sin(start_angle+arc_angle)
+      major_arc_end_y = cy - major_radius * Math.cos(start_angle+arc_angle)
+
+      minor_arc_start_x = cx - minor_radius * Math.sin(start_angle+arc_angle)
+      minor_arc_start_y = cy - minor_radius * Math.cos(start_angle+arc_angle)
+
+      minor_arc_end_x = cx - minor_radius * Math.sin(start_angle)
+      minor_arc_end_y = cy - minor_radius * Math.cos(start_angle)
+
+      d = "M#{major_arc_start_x},#{major_arc_start_y} A#{major_radius},#{major_radius} 0 0,0 #{major_arc_end_x},#{major_arc_end_y} L#{minor_arc_start_x},#{minor_arc_start_y} A#{minor_radius},#{minor_radius} 0 0,1 #{minor_arc_end_x},#{minor_arc_end_y} Z"
+
+      halo = Element.new('svg:path')
+      halo.add_attributes({'d' => d,
+                           'fill' => colour,
+                           'opacity' => '0.8',
+                           })
+
+      if border != nil
+        halo.add_attributes({ 'stroke' => border, 'stroke-width' => '2' })
+      end
+                          
+      parent_element.add_element(halo)
+    }
+  end
+
 
 end
