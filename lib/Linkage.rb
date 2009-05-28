@@ -16,10 +16,10 @@ class Linkage
 	include DefaultLinkageReader
 	
 	
-	attr_reader :first_position, :second_position
+	attr_accessor :first_position, :second_position
 	attr_reader :first_residue, :second_residue
 
-  def Linkage.Factory( proto_class , linkage_string )
+  def Linkage.Factory( proto_class , linkage_string=nil )
     linkage  = proto_class.new()
     if (linkage_string != nil)
       linkage.read_linkage(linkage_string)

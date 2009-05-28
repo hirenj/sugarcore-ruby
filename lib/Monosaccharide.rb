@@ -299,6 +299,10 @@ class Monosaccharide
     return @name
   end
 
+  def alternate_name?(namespace)
+    @alternate_name[namespace] != nil
+  end
+
   # Get the set of alternate namespaces defined for this residue
   #   p mono.alternate_namespaces # [ 'http://glycosciences.de', 'http://iupac' ]
   def alternate_namespaces
@@ -526,6 +530,12 @@ class NamespacedMonosaccharide < Monosaccharide
     super(namespace)
   end
 
+  def alternate_name?(namespace)
+    if namespace.is_a? Symbol
+      namespace = NAMESPACES[namespace]
+    end
+    super(namespace)    
+  end
   protected
   
 	def initialize_from_data

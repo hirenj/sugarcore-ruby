@@ -83,12 +83,12 @@ module Sugar::IO::CondensedIupac::Builder
     Sugar::IO::CondensedIupac::Builder::IupacLinkage
   end
   
-  def monosaccharide_factory(prototype)
+  def monosaccharide_factory(prototype=nil)
     prototype = (input_namespace == nil) ? prototype : input_namespace.to_s + ':' + prototype
     return Monosaccharide.Factory(residueClass, prototype)
   end
   
-  def linkage_factory(prototype)
+  def linkage_factory(prototype=nil)
     return Linkage.Factory(linkageClass, prototype)
   end
   

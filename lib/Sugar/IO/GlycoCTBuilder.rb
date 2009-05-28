@@ -22,12 +22,12 @@ module Sugar::IO::GlycoCT::Builder
 
   attr_accessor :input_namespace
 
-  def monosaccharide_factory(prototype)
+  def monosaccharide_factory(prototype=nil)
     prototype = (input_namespace == nil) ? prototype : input_namespace.to_s + ':' + prototype
     return Monosaccharide.Factory(residueClass,prototype)
   end
   
-  def linkage_factory(prototype)
+  def linkage_factory(prototype=nil)
     return Linkage.Factory(linkageClass, prototype)
   end
 
