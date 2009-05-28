@@ -120,9 +120,12 @@ class SvgRenderer
     	doc.root.add_attribute('width', width.to_s)
     	doc.root.add_attribute('height', height.to_s)  	  
 	  end
-  	doc.root.add_attribute('id', sugar.name)
   	doc.root.add_namespace('svg', SVG_ELEMENT_NS)
   	doc.root.add_namespace('xlink', XLINK_NS)
+    
+    return doc unless sugar
+
+  	doc.root.add_attribute('id', sugar.name)
     
     definitions = doc.root.add_element('svg:defs')
 
