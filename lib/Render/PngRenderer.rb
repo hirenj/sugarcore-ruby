@@ -22,6 +22,22 @@ class PngRenderer
     @svg_renderer.scheme=(scheme)
   end
 
+  def width=(width)
+    @svg_renderer.width=(width)
+  end
+
+  def width
+    @svg_renderer.width
+  end
+
+  def height
+    @svg_renderer.height
+  end
+
+  def height=(height)
+    @svg_renderer.height=(height)
+  end
+
   def render(sugar)
     svg_string = @svg_renderer.render(sugar).to_s
     svg_string.gsub!(/svg\:/,'')
@@ -38,9 +54,9 @@ class PngRenderer
       self.background_color = 'none'
     }
     the_svg.close
-    if ( width != nil && height != nil )
-      img.first.resize_to_fit!(width,height)
-    end
+    #if ( width != nil && height != nil )
+    #  img.first.resize_to_fit!(width,height)
+    #end
     return img.first.to_blob { self.format = 'PNG' }
   end
 

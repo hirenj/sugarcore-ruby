@@ -53,11 +53,11 @@ class SvgRenderer
 
       if /text:(\w+)/.match(scheme)
         group = Element.new('svg:svg')
-        group.add_attributes({ 'viewBox' => '0 0 100 100' })
+        group.add_attributes({ 'viewBox' => '0 0 100 100', 'width' => '100', 'height' => '100' })
 #        group.add_element('svg:rect', { 'x' => '0', 'y' => '0', 'width' => '100', 'height' => '100', 'style' => 'fill:#ffffff;' })
         my_name = res.name($~[1].to_sym)        
-        group.add_element('svg:text', { #'x' => '50', 
-                                        #'y' => '45', 
+        group.add_element('svg:text', { 'x' => '0', 
+                                        'y' => '0', 
                                         'font-family' => 'Helvetica, Arial, Sans-Serif',
                                         'font-size'=> my_name.size < 5 ? '28' : '24',
                                         'text-anchor' => 'middle',
@@ -406,12 +406,12 @@ class SvgRenderer
 
     icon = nil
 
-    if ( prototypes[res_id] != nil )
+    if ( false && prototypes[res_id] != nil )
       icon = Element.new('svg:use')
       icon.add_attribute('xlink:href' , "##{sugar.name}-proto-#{res_id}")
     end
 
-    if ( ! self.use_prototypes? )
+    if ( true || ! self.use_prototypes? )
       icon = Document.new(prototypes[res_id].to_s).root
     end
     
@@ -423,16 +423,9 @@ class SvgRenderer
     y_pos = res.dimensions[:height] + res.position[:y1]
 
     
-    #icon.add_attribute('transform',"translate(#{res.position[:x1]+100},#{res.position[:y1]+100}) rotate(180)")
-    if ( self.use_prototypes? )
     icon.add_attribute('x',"#{-1*x_pos}")
     icon.add_attribute('y',"#{-1*y_pos}")
-    else
-      icon.add_attribute('transform',"translate(#{-1*x_pos},#{-1*y_pos})")      
-    end
-    # self.min_y = -res.dimensions[:height]-res.position[:y1]
-    # self.max_x = -res.dimensions[:width]-res.position[:x2]
-    # self.max_y = -res.dimensions[:height]-res.position[:y2]
+    icon.add_attribute('transform',"translate(#{-1*x_pos},#{-1*y_pos})")      
     
     icon.add_attribute('width',res.dimensions[:width].to_s)
     icon.add_attribute('height',res.dimensions[:height].to_s)
