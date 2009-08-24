@@ -54,7 +54,10 @@ class SvgRenderer
       if ! /text:(\w+)/.match(scheme)
         prototypes[res_id] = XPath.first(res.raw_data_node, "disp:icon[@scheme='#{scheme}']/svg:svg", { 'disp' => DISPLAY_ELEMENT_NS, 'svg' => SVG_ELEMENT_NS })
       end
-      if /text:(\w+)/.match(scheme) || prototypes[res_id] == nil
+      if prototypes[res_id] == nil
+        scheme = 'text:ic'
+      end
+      if /text:(\w+)/.match(scheme)
         # prototypes[res_id] = prototypes[nil_mono.name(:id)]
         group = Element.new('svg:svg')
         group.add_attributes({ 'viewBox' => '0 0 100 100', 'width' => '100', 'height' => '100' })
