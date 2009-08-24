@@ -41,9 +41,6 @@ class SvgRenderer
     return prototypes ? prototypes[residue.name(:id)] : nil
   end
 
-  def get_text_icon(res,anchors)
-  end
-  
   def initialise_prototypes
     throw Exception.new("Sugar is not renderable") unless sugar.kind_of? Renderable
     nil_mono = Monosaccharide.Factory(sugar.root.class,'ecdb:nil')
@@ -57,7 +54,7 @@ class SvgRenderer
       if ! /text:(\w+)/.match(scheme)
         prototypes[res_id] = XPath.first(res.raw_data_node, "disp:icon[@scheme='#{scheme}']/svg:svg", { 'disp' => DISPLAY_ELEMENT_NS, 'svg' => SVG_ELEMENT_NS })
       end
-      if /text:(\w+)/.match(scheme) || prototypes[res_id == nil]
+      if /text:(\w+)/.match(scheme) || prototypes[res_id] == nil
         # prototypes[res_id] = prototypes[nil_mono.name(:id)]
         group = Element.new('svg:svg')
         group.add_attributes({ 'viewBox' => '0 0 100 100', 'width' => '100', 'height' => '100' })
