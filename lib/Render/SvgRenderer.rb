@@ -40,7 +40,10 @@ class SvgRenderer
   def prototype_for_residue(residue)    
     return prototypes ? prototypes[residue.name(:id)] : nil
   end
-     
+
+  def get_text_icon(res,anchors)
+  end
+  
   def initialise_prototypes
     throw Exception.new("Sugar is not renderable") unless sugar.kind_of? Renderable
     nil_mono = Monosaccharide.Factory(sugar.root.class,'ecdb:nil')
@@ -51,10 +54,13 @@ class SvgRenderer
 
       anchors = Hash.new()
 
-      if /text:(\w+)/.match(scheme)
+      if ! /text:(\w+)/.match(scheme)
+        prototypes[res_id] = XPath.first(res.raw_data_node, "disp:icon[@scheme='#{scheme}']/svg:svg", { 'disp' => DISPLAY_ELEMENT_NS, 'svg' => SVG_ELEMENT_NS })
+      end
+      if /text:(\w+)/.match(scheme) || prototypes[res_id == nil]
+        # prototypes[res_id] = prototypes[nil_mono.name(:id)]
         group = Element.new('svg:svg')
         group.add_attributes({ 'viewBox' => '0 0 100 100', 'width' => '100', 'height' => '100' })
-#        group.add_element('svg:rect', { 'x' => '0', 'y' => '0', 'width' => '100', 'height' => '100', 'style' => 'fill:#ffffff;' })
         my_name = res.name($~[1].to_sym)        
         group.add_element('svg:text', { 'x' => '0', 
                                         'y' => '0', 
@@ -65,7 +71,7 @@ class SvgRenderer
                                         'style'=>'fill:#0000ff;stroke:#000000;stroke-width:0;'
                                         }
                           ).text=my_name
-        prototypes[res_id] = group
+
         anchors[0] = { :x => 100, :y => 50 }
         anchors[1] = { :x => 0, :y => 50 }
         anchors[2] = { :x => 100, :y => 50 }
@@ -78,13 +84,9 @@ class SvgRenderer
           anchors[anchor.attribute("linkage").value().to_i] = { :x => 100 - anchor.attribute("x").value().to_i,
                                                                 :y => 100 - anchor.attribute("y").value().to_i }
         }
-
-      else
-        prototypes[res_id] = XPath.first(res.raw_data_node, "disp:icon[@scheme='#{scheme}']/svg:svg", { 'disp' => DISPLAY_ELEMENT_NS, 'svg' => SVG_ELEMENT_NS })
+        prototypes[res_id] = group
       end
-      if prototypes[res_id] == nil
-        prototypes[res_id] = prototypes[nil_mono.name(:id)]
-      end
+      
       prototypes[res_id].add_namespace('svg',SVG_ELEMENT_NS)
       
       prototypes[res_id].add_attribute('width', '100')
