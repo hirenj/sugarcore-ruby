@@ -422,7 +422,6 @@ class Sugar
     	  }.flatten    	  
   	  end
   	  if results.size > 1
-  	    puts self.sequence
   	    raise SugarException.new("Could not unambiguously find residue along path found instead #{results.size} residues")
       end
     	return results.first
