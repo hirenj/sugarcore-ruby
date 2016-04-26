@@ -34,6 +34,8 @@ class Sugar
     include DebugLog
     include DefaultReaderWriter
 
+    @@seq_hashes = Hash.new()
+
     attr :root
     attr_accessor :name
 
@@ -64,7 +66,15 @@ class Sugar
     end
     
     def hash
-      self.sequence
+       if (@@seq_hashes == nil)
+        @@seq_hashes = Hash.new()
+      end
+      seq = self.sequence
+      if (@@seq_hashes.has_key?(seq))
+        return @@seq_hashes[seq]
+      end
+      @@seq_hashes[seq] = @@seq_hashes.length + 1
+      return @@seq_hashes[seq]
     end
 	  
 	  def root=(new_root=@root)
