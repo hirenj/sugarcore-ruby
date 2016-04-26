@@ -713,6 +713,7 @@ style="fill:#000000;stroke:#000000;stroke-width:1;"
 	<unit id="cer" >
 		<name ns="dkfz" value="Cer"/>
 		<name ns="ic" value="Cer" />
+		<name ns="ic" value="-Cer" />
 		<name ns="ecdb" value="cer"/>
 		<property name="class" value="ic:AA"/>
 		<disp:icon scheme="boston">
@@ -730,6 +731,7 @@ style="fill:#000000;stroke:#000000;stroke-width:1;"
 	<unit id="asn" >
 		<name ns="dkfz" value="Asn"/>
 		<name ns="ic" value="Asn" />
+		<name ns="ic" value="-N" />
 		<name ns="ecdb" value="asn"/>
 		<property name="class" value="ic:AA"/>
 		<disp:icon scheme="boston">
@@ -763,9 +765,10 @@ style="fill:#000000;stroke:#000000;stroke-width:1;"
 			</svg:svg>
 		</disp:icon>
 	</unit>
-	<unit id="Ser" >
+	<unit id="S/T" >
 		<name ns="dkfz" value="Ser"/>
-		<name ns="ic" value="Ser" />
+		<name ns="ic" value="-O-S/T" />
+		<name ns="ic" value="S/T" />
 		<name ns="ecdb" value="ser"/>
 		<property name="class" value="ic:AA"/>
 		<disp:icon scheme="boston">
@@ -776,7 +779,61 @@ style="fill:#000000;stroke:#000000;stroke-width:1;"
 			<disp:anchor linkage="5" x="0" y="50" />
 			<disp:anchor linkage="6" x="0" y="50" />
 			<svg:svg>
-	    		<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Ser</svg:text>
+				<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">-O-S/T</svg:text>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="Any" >
+		<name ns="dkfz" value="Any"/>
+		<name ns="ic" value="-R" />
+		<name ns="ic" value="Any" />
+		<name ns="ecdb" value="any"/>
+		<property name="class" value="ic:Any"/>
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="0" y="50" />
+			<disp:anchor linkage="2" x="0" y="50" />
+			<disp:anchor linkage="3" x="0" y="50" />
+			<disp:anchor linkage="4" x="0" y="50" />
+			<disp:anchor linkage="5" x="0" y="50" />
+			<disp:anchor linkage="6" x="0" y="50" />
+			<svg:svg>
+				<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Any</svg:text>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="Ser" >
+		<name ns="dkfz" value="Ser"/>
+		<name ns="ic" value="Ser" />
+		<name ns="ic" value="-O-Ser" />
+		<name ns="ecdb" value="ser"/>
+		<property name="class" value="ic:AA"/>
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="0" y="50" />
+			<disp:anchor linkage="2" x="0" y="50" />
+			<disp:anchor linkage="3" x="0" y="50" />
+			<disp:anchor linkage="4" x="0" y="50" />
+			<disp:anchor linkage="5" x="0" y="50" />
+			<disp:anchor linkage="6" x="0" y="50" />
+			<svg:svg>
+				<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Ser</svg:text>
+			</svg:svg>
+		</disp:icon>
+	</unit>
+	<unit id="Hyl" >
+		<name ns="dkfz" value="Hyl"/>
+		<name ns="ic" value="Hyl" />
+		<name ns="ic" value="-O-Hyl" />
+		<name ns="ecdb" value="hyl"/>
+		<property name="class" value="ic:AA"/>
+		<disp:icon scheme="boston">
+			<disp:anchor linkage="1" x="0" y="50" />
+			<disp:anchor linkage="2" x="0" y="50" />
+			<disp:anchor linkage="3" x="0" y="50" />
+			<disp:anchor linkage="4" x="0" y="50" />
+			<disp:anchor linkage="5" x="0" y="50" />
+			<disp:anchor linkage="6" x="0" y="50" />
+			<svg:svg>
+				<svg:text width="100" height="100" x="50" y="70" style="fill: #0000ff; text-anchor: middle; stroke: #0000ff;" font-size="50">Hyl</svg:text>
 			</svg:svg>
 		</disp:icon>
 	</unit>
@@ -784,13 +841,31 @@ style="fill:#000000;stroke:#000000;stroke-width:1;"
 		<name ns="dkfz" value="PP"/>
 		<name ns="ic" value="PP" />
 		<name ns="ecdb" value="pp"/>
-		<property name="class" value="ic:Other"/>		
+		<property name="class" value="ic:Other"/>
+	</unit>
+	<unit id="pi" >
+		<name ns="dkfz" value="PI"/>
+		<name ns="ic" value="PI" />
+		<name ns="ecdb" value="pi"/>
+		<property name="class" value="ic:Other"/>
+	</unit>
+	<unit id="acyl" >
+		<name ns="dkfz" value="acyl"/>
+		<name ns="ic" value="acyl" />
+		<name ns="ecdb" value="acyl"/>
+		<property name="class" value="ic:Other"/>
+	</unit>
+	<unit id="etnp" >
+		<name ns="dkfz" value="etnp"/>
+		<name ns="ic" value="EtNP" />
+		<name ns="ecdb" value="etnp"/>
+		<property name="class" value="ic:Other"/>
 	</unit>
 	<unit id="ino" >
 		<name ns="dkfz" value="Ino"/>
 		<name ns="ic" value="Ino" />
 		<name ns="ecdb" value="ino"/>
-		<property name="class" value="ic:Other"/>		
+		<property name="class" value="ic:Other"/>
 	</unit>
 	<unit id="hso3" >
 		<name ns="dkfz" value="HSO3"/>
