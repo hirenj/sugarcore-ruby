@@ -586,8 +586,8 @@ class SvgRenderer
       y1 = -1*linkage.first_residue.center[:y]
       x2 = -1*linkage.second_residue.center[:x]
       y2 = -1*linkage.second_residue.center[:y]
-      link_width = (x2-x1).abs
-      link_height = (y2-y1).abs
+      link_width = (x2-x1).abs + 0.001
+      link_height = (y2-y1).abs + 0.001
       link_length = Math.hypot(link_width,link_height)
       deltax = -1 * (linkage_padding * link_height / link_length).to_i
       deltay = (linkage_padding * link_width / link_length).to_i
